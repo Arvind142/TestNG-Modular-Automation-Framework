@@ -1,0 +1,6 @@
+test-output/
+target/
+.idea/
+.settings/
+*.jar
+*.war
