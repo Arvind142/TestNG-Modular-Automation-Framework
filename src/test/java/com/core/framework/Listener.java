@@ -1,22 +1,22 @@
 package com.core.framework;
 
 import com.aventstack.extentreports.Status;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
-import org.testng.ITestResult;
+import org.testng.*;
+import org.testng.xml.XmlSuite;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
-public class Listener implements ITestListener {
+public class Listener implements ITestListener,IReporter {
     //base Property
     private Properties property;
     // reporting variables
     private String reportingFolder;
     // html reporter
-    private HTMLReporter reporter;
+    public static HTMLReporter reporter;
 
     public void onTestStart(ITestResult result) {
         System.out.println("========================================================================");
@@ -69,7 +69,7 @@ public class Listener implements ITestListener {
         property = readProperty("src/test/resources/Execution-settings.properties");
 
         // updating reporting folder
-        reportingFolder = property.getProperty("reportingFolder");
+        reportingFolder = "test-output";
 
         //reporting initialized
         reporter = HTMLReporter.initializeReporting(reportingFolder);
@@ -80,6 +80,12 @@ public class Listener implements ITestListener {
         reporter.stopReporting();
     }
 
+
+    @Override
+    public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
+//        IReporter.super.generateReport(xmlSuites, suites, outputDirectory);
+        System.out.println(outputDirectory);
+    }
 
     // _______________ Helper Methods _______________
     public String getTestCaseName(ITestResult result) {
@@ -118,16 +124,7 @@ public class Listener implements ITestListener {
             properties.put("ErrorMessage", e.getMessage());
             e.printStackTrace();
         }
-        if (properties.size() == 0) {
-            properties.put("reportingFolder", CoreConstants.Core.reportingFolder);
-            properties.put("testDataPath", CoreConstants.Core.testDataGiven);
-        } else {
-            if (!properties.contains("reportingFolder"))
-                properties.put("reportingFolder", CoreConstants.Core.reportingFolder);
-            if (!properties.contains("testDataPath"))
-                properties.put("testDataPath", CoreConstants.Core.testDataGiven);
 
-        }
         return properties;
     }
 }

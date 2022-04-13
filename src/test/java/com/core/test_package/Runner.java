@@ -6,6 +6,9 @@ import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import static com.aventstack.extentreports.Status.PASS;
+import static com.aventstack.extentreports.Status.FAIL;
+import static com.aventstack.extentreports.Status.SKIP;
 
 @Listeners(com.core.framework.Listener.class)
 public class Runner extends TestNG_Base
@@ -26,7 +29,10 @@ public class Runner extends TestNG_Base
 
     @Test
     public void testNoArgs(){
+        String testName = className + "." + (new Object() {
+        }.getClass().getEnclosingMethod().getName());
         System.out.println("Test Executed");
+        logger.log(testName,PASS,"FirstLOG");
     }
 
     @Test(dataProvider = "default")
