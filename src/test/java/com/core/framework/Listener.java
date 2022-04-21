@@ -81,7 +81,7 @@ public class Listener implements ITestListener {
     }
 
     // _______________ Helper Methods _______________
-    public String getTestCaseName(ITestResult result) {
+    public static String getTestCaseName(ITestResult result) {
         String[] resultDataArray = result.getMethod().getQualifiedName().split("\\.");
         String testName=resultDataArray[resultDataArray.length - 2] + "." + resultDataArray[resultDataArray.length - 1];
         // if no parameter then return test name

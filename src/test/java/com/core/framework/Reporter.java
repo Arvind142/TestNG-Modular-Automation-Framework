@@ -4,9 +4,13 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,11 +23,11 @@ public class Reporter {
 
     private Map<String, ExtentTest> htmlTestLogs = null;
 
-    public String reportingFolder = "";
+    private String reportingFolder = "";
 
-    public String assetFolder = "";
+    private String assetFolder = "";
 
-    public Logger logger;
+    private Logger logger;
 
     private Reporter(String reportingFolder) {
         logger=LoggerFactory.getLogger(Reporter.class);
@@ -71,6 +75,33 @@ public class Reporter {
         TestLog log = TestLog.log(stepDescription,expected,actual,evidence);
         extentTest.log(log.getLogStatus(), log.toString());
         logger.info("[ testlog Status : "+log.getLogStatus()+", testlog : "+log+"]");
+    }
+
+    public synchronized <T> void log(String methodName, String stepDescription,T expected,T actual, RemoteWebDriver driver) {
+        if (!htmlTestLogs.containsKey(methodName)) {
+            onTestStart(methodName);
+        }
+        ExtentTest extentTest = htmlTestLogs.get(methodName);
+        TestLog log = TestLog.log(stepDescription,expected,actual,takeSceenShotWebPage(driver,stepDescription));
+        extentTest.log(log.getLogStatus(), log.toString());
+        logger.info("[ testlog Status : "+log.getLogStatus()+", testlog : "+log+"]");
+    }
+
+    public String takeSceenShotWebPage(RemoteWebDriver driver, String fileName) {
+        String folderName = reportingFolder + "/Screenshot/";
+        File f = (new File(folderName));
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        String imgPath = folderName + fileName + ".jpg";
+        File s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(s, new File(imgPath));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+        return "Screenshot/" + fileName + ".jpg";
     }
 
 
