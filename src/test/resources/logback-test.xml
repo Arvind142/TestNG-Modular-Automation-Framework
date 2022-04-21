@@ -1,0 +1,30 @@
+<configuration>
+
+    <!-- Console Appender -->
+    <appender name="console-appender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender -->
+    <appender name="file-appender" class="ch.qos.logback.core.FileAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <file>trace.log</file>
+        <append>false</append>
+    </appender>
+
+    <!-- testng logger to skip unnecessary logs -->
+    <logger name="org.testng.internal.Graph" level="WARN">
+        <appender-ref ref="console-appender" />
+        <appender-ref ref="file-appender" />
+    </logger>
+
+    <root level="debug">
+        <appender-ref ref="console-appender" />
+        <appender-ref ref="file-appender" />
+    </root>
+
+</configuration>
