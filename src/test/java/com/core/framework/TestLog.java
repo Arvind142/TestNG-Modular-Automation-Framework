@@ -2,7 +2,6 @@ package com.core.framework;
 
 import com.aventstack.extentreports.Status;
 
-import javax.swing.text.html.HTML;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -14,7 +13,7 @@ import java.util.Calendar;
  */
 
 public class TestLog {
-    private HTMLReporter logger = Listener.reporter;
+    private Reporter logger = Listener.reporter;
     /**
      * holds step description
      */

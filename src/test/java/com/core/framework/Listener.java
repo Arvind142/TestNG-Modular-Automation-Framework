@@ -1,6 +1,8 @@
 package com.core.framework;
 
 import com.aventstack.extentreports.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.*;
 import org.testng.xml.XmlSuite;
 
@@ -10,45 +12,41 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-public class Listener implements ITestListener,IReporter {
+public class Listener implements ITestListener {
     //base Property
     private Properties property;
     // reporting variables
     private String reportingFolder;
     // html reporter
-    public static HTMLReporter reporter;
+    public static Reporter reporter;
+    public static Logger logger;
 
     public void onTestStart(ITestResult result) {
         System.out.println("========================================================================");
         String testName = getTestCaseName(result);
-        System.out.println(testName+" \t>\t test execution started!");
         reporter.onTestStart(testName);
         reporter.log(testName,Status.INFO,"test execution started!");
     }
 
     public void onTestCompletion(String testName){
-        System.out.println(testName+" \t>\t test execution completed!");
         reporter.log(testName,Status.INFO,"test execution completed!");
         System.out.println("========================================================================");
     }
 
     public void onTestSuccess(ITestResult result) {
         String testName = getTestCaseName(result);
-        System.out.println(testName+" \t>\t testcase passed!");
         reporter.log(testName,Status.PASS,"testcase passed!");
         onTestCompletion(testName);
     }
 
     public void onTestFailure(ITestResult result) {
         String testName = getTestCaseName(result);
-        System.out.println(testName+" \t>\t testcase failed!");
         reporter.log(testName,Status.FAIL,"testcase failed!");
         onTestCompletion(testName);
     }
 
     public void onTestSkipped(ITestResult result) {
         String testName = getTestCaseName(result);
-        System.out.println(testName+" \t>\t testcase skipped!");
         reporter.log(testName,Status.SKIP,"testcase skipped!");
         onTestCompletion(testName);
     }
@@ -58,33 +56,32 @@ public class Listener implements ITestListener,IReporter {
 
     public void onTestFailedWithTimeout(ITestResult result) {
         String testName = getTestCaseName(result);
-        System.out.println(testName+" \t>\t testcase failed with timeout!");
         reporter.log(testName,Status.FAIL,"testcase failed with timeout!");
         this.onTestFailure(result);
     }
 
     public void onStart(ITestContext context) {
+        // logger initialized
+        logger = LoggerFactory.getLogger(Listener.class);
+
+        logger.debug("logger initialized!");
 
         // read config to start with base
         property = readProperty("src/test/resources/Execution-settings.properties");
+
+        logger.debug("execution property read");
 
         // updating reporting folder
         reportingFolder = "test-output";
 
         //reporting initialized
-        reporter = HTMLReporter.initializeReporting(reportingFolder);
+        reporter = Reporter.initializeReporting(reportingFolder);
 
     }
 
     public void onFinish(ITestContext context) {
         reporter.stopReporting();
-    }
-
-
-    @Override
-    public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
-//        IReporter.super.generateReport(xmlSuites, suites, outputDirectory);
-        System.out.println(outputDirectory);
+        logger.debug("onFinish reached!");
     }
 
     // _______________ Helper Methods _______________

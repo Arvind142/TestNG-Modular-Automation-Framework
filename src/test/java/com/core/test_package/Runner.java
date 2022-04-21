@@ -6,9 +6,7 @@ import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-import static com.aventstack.extentreports.Status.PASS;
-import static com.aventstack.extentreports.Status.FAIL;
-import static com.aventstack.extentreports.Status.SKIP;
+import static com.aventstack.extentreports.Status.*;
 
 @Listeners(com.core.framework.Listener.class)
 public class Runner extends TestNG_Base

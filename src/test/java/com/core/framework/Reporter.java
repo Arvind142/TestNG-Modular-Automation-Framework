@@ -4,13 +4,14 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HTMLReporter {
+public class Reporter {
 
     private ExtentSparkReporter htmlReporter = null;
 
@@ -22,11 +23,16 @@ public class HTMLReporter {
 
     public String assetFolder = "";
 
-    private HTMLReporter(String reportingFolder) {
+    public Logger logger;
+
+    private Reporter(String reportingFolder) {
+        logger=LoggerFactory.getLogger(Reporter.class);
+        logger.debug("HTML Reporter called");
         // creatig asset folder
         assetFolder = reportingFolder+"/assets";
         File folder = new File(assetFolder);
         folder.mkdirs();
+        logger.debug("Asset folder created @ "+folder.getAbsolutePath());
         htmlReporter = new ExtentSparkReporter(reportingFolder + "/result.html");
         this.reportingFolder=reportingFolder;
         extentReport = new ExtentReports();
@@ -38,12 +44,14 @@ public class HTMLReporter {
                 //do Nothing go with default config
             }
         }
+        logger.debug("html reporting initialized");
     }
 
-    public void onTestStart(String methodName) {
+    public synchronized void onTestStart(String methodName) {
         ExtentTest test = extentReport.createTest(methodName);
         extentReport.attachReporter(htmlReporter);
         htmlTestLogs.put(methodName, test);
+        logger.debug("html reporting initialized for "+methodName);
     }
 
     public synchronized void log(String methodName, Status status, String log) {
@@ -52,6 +60,7 @@ public class HTMLReporter {
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
         extentTest.log(status, log);
+        logger.info("[ testlog Status : "+status+", testlog : "+log+"]");
     }
 
     public synchronized <T> void log(String methodName, String stepDescription,T expected,T actual, String evidence) {
@@ -61,11 +70,13 @@ public class HTMLReporter {
         ExtentTest extentTest = htmlTestLogs.get(methodName);
         TestLog log = TestLog.log(stepDescription,expected,actual,evidence);
         extentTest.log(log.getLogStatus(), log.toString());
+        logger.info("[ testlog Status : "+log.getLogStatus()+", testlog : "+log+"]");
     }
 
 
     public boolean stopReporting() {
         extentReport.flush();
+        logger.debug("report flush");
         return true;
     }
 
@@ -86,7 +97,7 @@ public class HTMLReporter {
         this.assetFolder = assetFolder;
     }
 
-    public static HTMLReporter initializeReporting(String reportingFolderPath) {
+    public static Reporter initializeReporting(String reportingFolderPath) {
         File folder = new File(reportingFolderPath);
         // folder check - if not present create one
         if (!folder.exists()) {
@@ -98,6 +109,6 @@ public class HTMLReporter {
         if (!folder.exists()) {
             folder.mkdirs();
         }
-        return new HTMLReporter(resultFolder);
+        return new Reporter(resultFolder);
     }
 }

@@ -5,8 +5,9 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 public class TestNG_Base {
-    protected HTMLReporter logger;
+    protected Reporter logger;
     protected String className;
+
     @BeforeClass
     public void beforeClassMethod(ITestContext context){
         logger=Listener.reporter;
