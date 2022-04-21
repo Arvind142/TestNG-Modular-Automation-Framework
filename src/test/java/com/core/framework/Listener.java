@@ -4,23 +4,21 @@ import com.aventstack.extentreports.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.*;
-import org.testng.xml.XmlSuite;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 public class Listener implements ITestListener {
     //base Property
-    private Properties property;
+    public Properties property;
     // reporting variables
-    private String reportingFolder;
+    public String reportingFolder;
     // html reporter
     public static Reporter reporter;
     public static Logger logger;
 
+    @Override
     public void onTestStart(ITestResult result) {
         System.out.println("========================================================================");
         String testName = getTestCaseName(result);
@@ -32,34 +30,32 @@ public class Listener implements ITestListener {
         reporter.log(testName,Status.INFO,"test execution completed!");
         System.out.println("========================================================================");
     }
-
+    @Override
     public void onTestSuccess(ITestResult result) {
         String testName = getTestCaseName(result);
         reporter.log(testName,Status.PASS,"testcase passed!");
         onTestCompletion(testName);
     }
-
+    @Override
     public void onTestFailure(ITestResult result) {
         String testName = getTestCaseName(result);
         reporter.log(testName,Status.FAIL,"testcase failed!");
         onTestCompletion(testName);
     }
-
+    @Override
     public void onTestSkipped(ITestResult result) {
         String testName = getTestCaseName(result);
         reporter.log(testName,Status.SKIP,"testcase skipped!");
         onTestCompletion(testName);
     }
 
-    public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-    }
-
+    @Override
     public void onTestFailedWithTimeout(ITestResult result) {
         String testName = getTestCaseName(result);
         reporter.log(testName,Status.FAIL,"testcase failed with timeout!");
         this.onTestFailure(result);
     }
-
+    @Override
     public void onStart(ITestContext context) {
         // logger initialized
         logger = LoggerFactory.getLogger(Listener.class);
@@ -78,7 +74,7 @@ public class Listener implements ITestListener {
         reporter = Reporter.initializeReporting(reportingFolder);
 
     }
-
+    @Override
     public void onFinish(ITestContext context) {
         reporter.stopReporting();
         logger.debug("onFinish reached!");
@@ -92,7 +88,7 @@ public class Listener implements ITestListener {
         if(result.getParameters().length==0)
             return testName;
 
-        //get first parameter out of result as we have paramter passed to our test method
+        //get first parameter out of result as we have parameter passed to our test method
         Object paramObject = result.getParameters()[0];
 
         // if given data is Object array
@@ -103,7 +99,7 @@ public class Listener implements ITestListener {
         // converting object to String
         String paramString = String.valueOf(paramObject);
 
-        // returning testname
+        // returning test name
         return (testName+".["+paramString+"]");
     }
 
