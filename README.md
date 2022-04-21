@@ -1,9 +1,9 @@
 # Modular-Automation-Framework
 ___
-<!--
-[![wakatime](https://wakatime.com/badge/user/37a8dbe7-12d0-483c-b5e7-715eec83bc07/project/e57ef94c-0f30-43e4-b5cd-0b0a4efda35d.svg)](https://wakatime.com/badge/user/37a8dbe7-12d0-483c-b5e7-715eec83bc07/project/e57ef94c-0f30-43e4-b5cd-0b0a4efda35d)
-![](https://img.shields.io/github/watchers/arvind142/Modular-Automation-Testing.svg)
+
 ![](https://img.shields.io/github/license/arvind142/Modular-Automation-Testing.svg)
+<!--
+
 -->
 ___
 **Framework** to cater basic needs of automation tester, where tester can mainly focus on scripting!!!
@@ -13,6 +13,6 @@ Few example of what you get:
 1. wrapper with **Selenium Library** to help you perform Browser testing effortlessly.
 ___
 
-#### Works on
+#### Tested on!
 ![](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)

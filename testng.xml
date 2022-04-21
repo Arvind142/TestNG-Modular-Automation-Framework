@@ -8,6 +8,7 @@
     <test name="Test">
         <packages>
             <!-- test package declaration -->
+            <package name="com.core.test_package.*"></package>
         </packages>
     </test> <!-- Test -->
 </suite> <!-- Suite -->
