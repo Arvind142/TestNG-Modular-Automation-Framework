@@ -7,7 +7,6 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +16,17 @@ import java.util.Map;
 
 public class Reporter {
 
-    private ExtentSparkReporter htmlReporter = null;
+    private ExtentSparkReporter htmlReporter;
 
-    private ExtentReports extentReport = null;
+    private ExtentReports extentReport;
 
-    private Map<String, ExtentTest> htmlTestLogs = null;
+    private Map<String, ExtentTest> htmlTestLogs;
 
-    private String reportingFolder = "";
+    private String reportingFolder;
 
-    private String assetFolder = "";
+    private String assetFolder;
 
-    private Logger logger;
+    private final Logger logger;
 
     private Reporter(String reportingFolder) {
         logger=LoggerFactory.getLogger(Reporter.class);
@@ -35,7 +34,7 @@ public class Reporter {
         // creatig asset folder
         assetFolder = reportingFolder+"/assets";
         File folder = new File(assetFolder);
-        folder.mkdirs();
+        logger.debug((folder.mkdirs()?"asset folder created":"asset folder creation failed"));
         logger.debug("Asset folder created @ "+folder.getAbsolutePath());
         htmlReporter = new ExtentSparkReporter(reportingFolder + "/result.html");
         this.reportingFolder=reportingFolder;
@@ -91,7 +90,7 @@ public class Reporter {
         String folderName = reportingFolder + "/Screenshot/";
         File f = (new File(folderName));
         if (!f.exists()) {
-            f.mkdirs();
+            logger.debug((f.mkdirs()?"Screenshot folder created":"Screenshot folder creation failed"));
         }
         String imgPath = folderName + fileName + ".jpg";
         File s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -110,6 +109,7 @@ public class Reporter {
         logger.debug("report flush");
         return true;
     }
+
 
 
     public String getReportingFolder() {

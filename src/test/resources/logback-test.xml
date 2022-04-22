@@ -17,16 +17,18 @@
     </appender>
 
     <!-- testng logger to skip unnecessary logs -->
+
     <logger name="org.testng.internal.Utils" level="WARN">
         <appender-ref ref="console-appender" />
         <appender-ref ref="file-appender" />
     </logger>
+
     <logger name="org.testng.internal.Graph" level="WARN">
         <appender-ref ref="console-appender" />
         <appender-ref ref="file-appender" />
     </logger>
 
-    <root level="debug">
+    <root level="DEBUG">
         <appender-ref ref="console-appender" />
         <appender-ref ref="file-appender" />
     </root>

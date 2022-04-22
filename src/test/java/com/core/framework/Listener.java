@@ -20,7 +20,7 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        System.out.println("========================================================================");
+        System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
         reporter.onTestStart(testName);
         reporter.log(testName,Status.INFO,"test execution started!");
@@ -28,7 +28,7 @@ public class Listener implements ITestListener {
 
     public void onTestCompletion(String testName){
         reporter.log(testName,Status.INFO,"test execution completed!");
-        System.out.println("========================================================================");
+        System.out.println("================================================================================================================================================");
     }
     @Override
     public void onTestSuccess(ITestResult result) {
