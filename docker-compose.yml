@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  modular-automation-framework:
+    build: ./
+    volumes:
+      - './test-output:/Modular-Automation-Framework/test-output'
+      - './trace.log:/Modular-Automation-Framework/trace.log'
