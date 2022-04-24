@@ -1,7 +1,11 @@
 version: '3.7'
+# compose version details
 services:
+  # service name(container name)
   modular-automation-framework:
+    # from where to build
     build: ./
+    # volume mapping to get data out of docker container
     volumes:
       - './test-output:/Modular-Automation-Framework/test-output'
       - './trace.log:/Modular-Automation-Framework/trace.log'
