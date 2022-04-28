@@ -12,7 +12,7 @@ import java.util.Properties;
 
 public class Listener implements ITestListener {
     //base Property
-    public Properties property;
+    public static Properties property;
     // reporting variables
     public String reportingFolder;
     // html reporter

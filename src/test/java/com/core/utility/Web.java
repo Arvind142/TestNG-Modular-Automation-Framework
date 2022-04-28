@@ -31,76 +31,51 @@ public class Web {
     /***
      * to initialize webdriver based on sent browserName
      *
-     * @param globalProperty global property to help in identification of how execution works
      * @return webdriver variable
      */
-    public synchronized WebDriver initializeWebDriver(Properties globalProperty) {
+    public synchronized WebDriver initializeWebDriver() {
+        Properties globalProperty = Listener.property;
         WebDriver driver = null;
-        String browserName= globalProperty.getProperty("browserName");
+        String browserName = globalProperty.getProperty("browser");
         try {
-            if(globalProperty.getProperty("remoteExecution").toLowerCase().startsWith("n")) {
+            if (globalProperty.getProperty("isRemote").toLowerCase().startsWith("n")) {
                 //WDM use confirmation
-                if(globalProperty.getProperty("useWebDriverManger").toLowerCase().startsWith("y")){
-                    switch (browserName.toUpperCase()) {
-                        case "CHROME":
-                            WebDriverManager.chromedriver().setup();
-                            driver = new ChromeDriver();
-                            break;
-                        case "EDGE":
-                        case "MSEDGE":
-                            WebDriverManager.edgedriver().setup();
-                            driver = new EdgeDriver();
-                            break;
-                        case "FIREFOX":
-                            WebDriverManager.firefoxdriver().setup();
-                            driver = new FirefoxDriver();
-                            break;
-                        case "IE":
-                        case "INTERNETEXPLORER":
-                            WebDriverManager.iedriver().setup();
-                            driver = new InternetExplorerDriver();
-                            break;
-                        default:
-                            throw new InvalidArgumentException("Invalid BrowserName");
-                    }
-                }
-                else{
-                    switch (browserName.toUpperCase()) {
-                        case "CHROME":
-                            System.setProperty("webdriver.chrome.driver","Drivers/ChromeDriver.exe");
-                            driver = new ChromeDriver();
-                            break;
-                        case "EDGE":
-                        case "MSEDGE":
-                            System.setProperty("webdriver.edge.driver","Drivers/EdgeDriver.exe");
-                            driver = new EdgeDriver();
-                            break;
-                        case "FIREFOX":
-                            System.setProperty("webdriver.gecko.driver","Drivers/GeckoDriver.exe");
-                            driver = new FirefoxDriver();
-                            break;
-                        case "IE":
-                        case "INTERNETEXPLORER":
-                            System.setProperty("webdriver.ie.driver","Drivers/IEDriver.exe");
-                            driver = new InternetExplorerDriver();
-                            break;
-                        default:
-                            throw new InvalidArgumentException("Invalid BrowserName");
-                    }
-                }
-            }
-            else{
-                URL url = new URL(globalProperty.getProperty("remoteUrl"));
                 switch (browserName.toUpperCase()) {
                     case "CHROME":
-                        driver = new RemoteWebDriver(url,new ChromeOptions());
+                        WebDriverManager.chromedriver().setup();
+                        driver = new ChromeDriver();
                         break;
                     case "EDGE":
                     case "MSEDGE":
-                        driver = new RemoteWebDriver(url,new EdgeOptions());
+                        WebDriverManager.edgedriver().setup();
+                        driver = new EdgeDriver();
                         break;
                     case "FIREFOX":
-                        driver = new RemoteWebDriver(url,new FirefoxOptions());
+                    case "FOX":
+                        WebDriverManager.firefoxdriver().setup();
+                        driver = new FirefoxDriver();
+                        break;
+                    case "IE":
+                    case "INTERNETEXPLORER":
+                        WebDriverManager.iedriver().setup();
+                        driver = new InternetExplorerDriver();
+                        break;
+                    default:
+                        throw new InvalidArgumentException("Invalid BrowserName");
+                }
+            } else {
+                URL url = new URL(globalProperty.getProperty("remoteUrl"));
+                switch (browserName.toUpperCase()) {
+                    case "CHROME":
+                        driver = new RemoteWebDriver(url, new ChromeOptions());
+                        break;
+                    case "EDGE":
+                    case "MSEDGE":
+                        driver = new RemoteWebDriver(url, new EdgeOptions());
+                        break;
+                    case "FIREFOX":
+                    case "FOX":
+                        driver = new RemoteWebDriver(url, new FirefoxOptions());
                         break;
                     default:
                         throw new InvalidArgumentException("Invalid BrowserName");
@@ -108,12 +83,10 @@ public class Web {
             }
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
-            driver = null;
-            return driver;
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
-            driver = null;
-            return driver;
+            return null;
         }
 
         return driver;
@@ -251,7 +224,7 @@ public class Web {
                     return driver.findElement(by(locator));
                 }
             });
-            highlightWebElement(driver,element);
+            highlightWebElement(driver, element);
             return element;
         } catch (Exception e) {
             if (throwException) {
@@ -284,7 +257,7 @@ public class Web {
                     return driver.findElement(locator);
                 }
             });
-            highlightWebElement(driver,element);
+            highlightWebElement(driver, element);
             return element;
         } catch (Exception e) {
             if (throwException) {
@@ -394,7 +367,7 @@ public class Web {
         }
     }
 
-    public void highlightWebElement(WebDriver driver, WebElement element){
+    public void highlightWebElement(WebDriver driver, WebElement element) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].setAttribute('style', 'background: yellow; border: 2px solid red;');", element);
     }

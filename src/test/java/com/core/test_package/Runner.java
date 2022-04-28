@@ -1,6 +1,8 @@
 package com.core.test_package;
 
 import com.core.framework.TestNG_Base;
+import com.core.utility.Web;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
@@ -31,6 +33,11 @@ public class Runner extends TestNG_Base {
         }.getClass().getEnclosingMethod().getName());
         logger.log(testMethod, INFO, "test Executed");
         logger.log(testMethod, PASS, "FirstLOG");
+        Web web = new Web();
+        WebDriver driver = web.initializeWebDriver();
+        driver.get("google.com");
+        logger.log(testMethod,INFO,driver.getCurrentUrl());
+        driver.quit();
     }
 
     @Test(dataProvider = "default")
