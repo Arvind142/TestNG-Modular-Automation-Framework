@@ -63,7 +63,7 @@ public class Reporter {
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
         extentTest.log(status, log);
-        logger.info("[ testlog Status : "+status+", testlog : "+log+"]");
+        loggerLog(status,log);
     }
 
     public synchronized <T> void log(String methodName, String stepDescription,T expected,T actual, String evidence) {
@@ -72,8 +72,8 @@ public class Reporter {
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
         TestLog log = TestLog.log(stepDescription,expected,actual,evidence);
-        extentTest.log(log.getLogStatus(), log.toString());
-        logger.info("[ testlog Status : "+log.getLogStatus()+", testlog : "+log+"]");
+        extentTest.log(log.getLogStatus(), log.toString());;
+        loggerLog(log.getLogStatus(),log.toString());
     }
 
     public synchronized <T> void log(String methodName, String stepDescription,T expected,T actual, RemoteWebDriver driver) {
@@ -83,7 +83,20 @@ public class Reporter {
         ExtentTest extentTest = htmlTestLogs.get(methodName);
         TestLog log = TestLog.log(stepDescription,expected,actual,takeSceenShotWebPage(driver,stepDescription));
         extentTest.log(log.getLogStatus(), log.toString());
-        logger.info("[ testlog Status : "+log.getLogStatus()+", testlog : "+log+"]");
+        loggerLog(log.getLogStatus(),log.toString());
+    }
+
+    private void loggerLog(Status status, String message){
+        switch(status){
+            case FAIL:
+                logger.error("[ testlog Status : "+status+", testlog : "+message+"]");
+                break;
+            case WARNING:
+                logger.warn("[ testlog Status : "+status+", testlog : "+message+"]");
+                break;
+            default:
+                logger.info("[ testlog Status : "+status+", testlog : "+message+"]");
+        }
     }
 
     public String takeSceenShotWebPage(RemoteWebDriver driver, String fileName) {

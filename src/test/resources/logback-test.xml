@@ -12,7 +12,7 @@
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-        <file>trace.log</file>
+        <file>logs/trace.log</file>
         <append>false</append>
     </appender>
 

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -65,8 +66,12 @@ public class Listener implements ITestListener {
         // read config to start with base
         property = readProperty("src/test/resources/Execution-settings.properties");
 
-        logger.debug("execution property read");
-
+        if(property!=null){
+            logger.debug("execution property read");
+        }
+        else{
+            logger.error("failed to read property file");
+        }
         // updating reporting folder
         reportingFolder = "test-output";
 
@@ -104,18 +109,13 @@ public class Listener implements ITestListener {
     }
 
 
-    public Properties readProperty(String propertyFilePath) {
+    public Properties readProperty(String propertyFilePath){
         Properties properties = new Properties();
         try (InputStream ins = new FileInputStream(propertyFilePath)) {
             properties.load(ins);
-        } catch (FileNotFoundException e) {
-            properties.put("Error", "FileNotFound!");
-            properties.put("ErrorMessage", e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
-            properties.put("Error", "Some Error!");
-            properties.put("ErrorMessage", e.getMessage());
             e.printStackTrace();
+            return null;
         }
 
         return properties;
