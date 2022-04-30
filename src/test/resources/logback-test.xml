@@ -16,6 +16,17 @@
         <append>false</append>
     </appender>
 
+    <appender name="html-appender" class="ch.qos.logback.core.FileAppender">
+        <file>logs/html_logs.html</file>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <charset>UTF-8</charset>
+            <layout class="ch.qos.logback.classic.html.HTMLLayout">
+                <pattern>%d{HH:mm:ss.SSS}%thread%level%logger%line%msg</pattern>
+            </layout>
+        </encoder>
+        <append>false</append>
+    </appender>
+
     <!-- testng logger to skip unnecessary logs -->
 
     <logger name="org.testng.internal.Utils" level="WARN">
@@ -28,9 +39,14 @@
         <appender-ref ref="file-appender" />
     </logger>
 
+    <logger name="io.netty" level="WARN" />
+    <logger name="org.asynchttpclient.netty" level="WARN" />
+    <logger name="io.github.bonigarcia.wdm" level="WARN" />
+
     <root level="DEBUG">
         <appender-ref ref="console-appender" />
         <appender-ref ref="file-appender" />
+        <appender-ref ref="html-appender" />
     </root>
 
 </configuration>

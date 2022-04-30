@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class Reporter {
 
@@ -123,6 +124,17 @@ public class Reporter {
         return true;
     }
 
+
+    public void setSystemVars(Properties props){
+        if(props==null)
+            return;
+        if(props.isEmpty())
+            return;
+        //adding property file details onto report
+        for(Object key:props.keySet()){
+            extentReport.setSystemInfo(key.toString(),props.getProperty(key.toString()));
+        }
+    }
 
 
     public String getReportingFolder() {

@@ -78,6 +78,9 @@ public class Listener implements ITestListener {
         //reporting initialized
         reporter = Reporter.initializeReporting(reportingFolder);
 
+        // loading properties data into report
+        reporter.setSystemVars(property);
+
     }
     @Override
     public void onFinish(ITestContext context) {

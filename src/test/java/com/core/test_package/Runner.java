@@ -35,7 +35,7 @@ public class Runner extends TestNG_Base {
         logger.log(testMethod, PASS, "FirstLOG");
         Web web = new Web();
         WebDriver driver = web.initializeWebDriver();
-        driver.get("google.com");
+        driver.get("https://google.com");
         logger.log(testMethod,INFO,driver.getCurrentUrl());
         driver.quit();
     }
