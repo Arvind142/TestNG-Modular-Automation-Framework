@@ -39,7 +39,7 @@ ___
 #### Cleanup after execution stopped
 	docker-compose down
 
-_You will get your reports in test-output folder/{greatesNumber folder}_
+_You will get your reports in test-output/{greatesNumber folder} folder_
 
 
 <!--
