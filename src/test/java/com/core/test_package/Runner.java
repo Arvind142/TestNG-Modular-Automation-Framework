@@ -42,15 +42,13 @@ public class Runner extends TestNG_Base {
 
     @Test(dataProvider = "default")
     public void test2Args(Object arg1) {
-        testMethod = className + "." + (new Object() {
-        }.getClass().getEnclosingMethod().getName());
+        testMethod = getTestCaseName(arg1);
         logger.log(testMethod, INFO, "test Executed");
     }
 
     @Test(dataProvider = "default")
     public void testArgs(Object... arg2) {
-        testMethod = className + "." + (new Object() {
-        }.getClass().getEnclosingMethod().getName());
+        testMethod = getTestCaseName(arg2);
         logger.log(testMethod, INFO, "test Executed");
     }
 

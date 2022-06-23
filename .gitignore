@@ -5,3 +5,7 @@ target/
 *.jar
 *.war
 *.log
+logs/*
+.code/
+.classpath
+.project

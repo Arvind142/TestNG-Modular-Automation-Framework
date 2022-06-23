@@ -40,9 +40,11 @@ services:
   #-------------------SELENIUM GRID services ended-----------------------
   # service name(container name)
   modular-automation-framework:
-    # from where to build
-    build: ./
-    # volume mapping to get data out of docker container
+    # which container to use for building
+    image: maven:3.8.5-openjdk-11-slim
+    # to copy project into container
     volumes:
-      - './test-output:/Modular-Automation-Framework/test-output'
-      - './logs:/Modular-Automation-Framework/logs'
+      - './:/project'
+    shm_size: 2gb
+    working_dir: '/project'
+    command: mvn clean compile test
