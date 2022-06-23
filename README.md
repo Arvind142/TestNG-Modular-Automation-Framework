@@ -26,7 +26,7 @@ ___
 |:--|:--|
 | HTML Report	|  _Extent Reporting_ |
 | Logging		|	 _Log-back logger_ |
-|Automatic Driver version management | _Using WDM(WebDriverManagement)_ |
+|Automatic Driver version management | _WDM(WebDriverManagement)_ |
 |Containerization | _Docker_|
 
 ___
@@ -39,8 +39,16 @@ ___
 #### Cleanup after execution stopped
 	docker-compose down
 
-_You will get your reports in test-output/{greatesNumber folder} folder_
+**Test Report location**
 
+> test-output/(Highest_Number)/
+
+> result.html - html report
+> 
+> assets/ - can be used to store screenshots/payloads
+
+**Test Logs**
+> logs/
 
 <!--
 #### Tested on!
