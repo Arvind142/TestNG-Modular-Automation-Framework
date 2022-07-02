@@ -1,5 +1,6 @@
 package com.core.test_package;
 
+import com.core.framework.Listener;
 import com.core.framework.TestNG_Base;
 import com.core.utility.Web;
 import org.openqa.selenium.WebDriver;
@@ -11,7 +12,7 @@ import org.testng.annotations.Test;
 
 import static com.aventstack.extentreports.Status.*;
 
-@Listeners(com.core.framework.Listener.class)
+@Listeners(Listener.class)
 public class Runner extends TestNG_Base {
     @DataProvider(name = "default")
     public Object[][] dataProvider() {
@@ -42,15 +43,13 @@ public class Runner extends TestNG_Base {
 
     @Test(dataProvider = "default")
     public void test2Args(Object arg1) {
-        testMethod = className + "." + (new Object() {
-        }.getClass().getEnclosingMethod().getName());
+        testMethod = getTestCaseName(arg1);
         logger.log(testMethod, INFO, "test Executed");
     }
 
     @Test(dataProvider = "default")
     public void testArgs(Object... arg2) {
-        testMethod = className + "." + (new Object() {
-        }.getClass().getEnclosingMethod().getName());
+        testMethod = getTestCaseName(arg2);
         logger.log(testMethod, INFO, "test Executed");
     }
 
