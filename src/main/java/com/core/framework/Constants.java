@@ -1,7 +1,5 @@
 package com.core.framework;
 
-import org.openqa.selenium.By;
-
 public class Constants {
     /***
      * web locators

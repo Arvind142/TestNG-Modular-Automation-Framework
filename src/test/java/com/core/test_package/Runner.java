@@ -9,7 +9,6 @@ import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-
 import static com.aventstack.extentreports.Status.*;
 
 @Listeners(Listener.class)
@@ -30,8 +29,7 @@ public class Runner extends TestNG_Base {
 
     @Test
     public void testNoArgs() {
-        testMethod = className + "." + (new Object() {
-        }.getClass().getEnclosingMethod().getName());
+        testMethod = getTestCaseName();
         logger.log(testMethod, INFO, "test Executed");
         logger.log(testMethod, PASS, "FirstLOG");
         Web web = new Web();
