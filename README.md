@@ -43,9 +43,9 @@ ___
 
 > test-output/(Highest_Number)/
 
-> result.html - html report
-> 
-> assets/ - can be used to store screenshots/payloads
+> result.html - test result report
+> summary/ - where you can find list of pass/fail/skip cases
+> assets/ - where you can store screenshots/payloads
 
 **Test Logs**
 > logs/

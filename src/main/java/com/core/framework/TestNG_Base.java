@@ -1,11 +1,10 @@
 package com.core.framework;
 
+import com.google.common.base.Splitter;
 import org.testng.ITestContext;
-import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
+import java.util.List;
 
 public class TestNG_Base {
     protected Reporter logger;
@@ -25,8 +24,8 @@ public class TestNG_Base {
     }
 
     /***
-     * to be used when your testMethod doesnt take any paramters
-     * @return
+     * to be used when your testMethod doesn't take any parmaters
+     * @return returns strign which will identify test case framework for reporting
      */
     public String getTestCaseName(){
         return getMethodAndClassName();
@@ -35,20 +34,20 @@ public class TestNG_Base {
     /****
      * to be used when your testMethod intakes parmaeters, you have to pass very first parmater of your testmethod
      * as an parameter to this method so that logging can happen correctly.
-     * @param firstParam
-     * @return
+     * @param firstParam first param which you received from your data provider
+     * @return returns strign which will identify test case framework for reporting
      */
     public String getTestCaseName(Object firstParam){
         // just in case object passed in an array instead of single param
         if(firstParam instanceof Object[]){
             firstParam = ((Object[])firstParam)[0];
         }
-        return getMethodAndClassName()+".["+String.valueOf(firstParam)+"]";
+        return getMethodAndClassName()+".["+firstParam+"]";
     }
 
     private String getMethodAndClassName(){
         StackTraceElement element = Thread.currentThread().getStackTrace()[3];
-        String[] quailiferName = element.getClassName().split("\\.");
-        return quailiferName[quailiferName.length-1]+"."+element.getMethodName();
+        List<String> quailiferName = Splitter.on('.').splitToList(element.getClassName());
+        return quailiferName.get(quailiferName.size()-1)+"."+element.getMethodName();
     }
 }

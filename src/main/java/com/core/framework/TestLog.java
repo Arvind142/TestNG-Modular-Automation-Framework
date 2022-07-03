@@ -2,9 +2,6 @@ package com.core.framework;
 
 import com.aventstack.extentreports.Status;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 /***
  * Test class holds few variables which are required while logging test status
  *
@@ -13,37 +10,26 @@ import java.util.Calendar;
  */
 
 public class TestLog {
-    private Reporter logger = Listener.reporter;
     /**
      * holds step description
      */
-    private String stepDescription = "";
+    private final String stepDescription;
     /**
      * holds expected value
      */
-    private String expectedValue = "";
+    private final String expectedValue;
     /**
      * holds actual value
      */
-    private String actualValue = "";
+    private final String actualValue;
     /**
      * log status holds status of log like PASS/FAIL/SKIP
      */
-    private Status logStatus;
+    private final Status logStatus;
     /**
      * attachment path is hold in attachment variable
      */
-    private String attachment = "";
-    /**
-     * evidenceTime is generated at runtime to get time at which statement was
-     * logged
-     */
-    private String evidenceTime = "";
-
-    /**
-     * to format evidence date as HH:mm:ss dd/MM/yy
-     */
-    private SimpleDateFormat reportUiDateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+    private final String attachment;
 
     /***
      * constructor to create log with required values
@@ -61,33 +47,11 @@ public class TestLog {
         this.expectedValue = expectedValue;
         this.actualValue = actualValue;
         this.logStatus = logStatus;
-        if (attachment != null) {
-            this.attachment = "<a href=\"" + attachment + "\" target=\"_blank\"> Click Here!</a>";
-        } else {
+        if (attachment == null || attachment.trim()=="") {
             this.attachment = attachment;
+        } else {
+            this.attachment = "<a href=\"" + attachment + "\" target=\"_blank\"> Click Here!</a>";
         }
-        this.evidenceTime = reportUiDateFormat.format(Calendar.getInstance().getTime());
-    }
-
-    /**
-     * @return Test class Object the stepDescription
-     */
-    public String getStepDescription() {
-        return stepDescription;
-    }
-
-    /**
-     * @return Test class Object the expectedValue
-     */
-    public String getExpectedValue() {
-        return expectedValue;
-    }
-
-    /**
-     * @return Test class Object the actualValue
-     */
-    public String getActualValue() {
-        return actualValue;
     }
 
     /**
@@ -95,20 +59,6 @@ public class TestLog {
      */
     public Status getLogStatus() {
         return logStatus;
-    }
-
-    /**
-     * @return Test class Object the attachment
-     */
-    public String getAttachment() {
-        return attachment;
-    }
-
-    /**
-     * @return Test class Object the evidenceTime
-     */
-    public String getEvidenceTime() {
-        return evidenceTime;
     }
 
     /***

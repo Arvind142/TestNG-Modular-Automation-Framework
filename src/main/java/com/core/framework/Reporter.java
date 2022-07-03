@@ -10,7 +10,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -20,11 +19,11 @@ import java.util.Properties;
 
 public class Reporter {
 
-    private ExtentSparkReporter htmlReporter;
+    private final ExtentSparkReporter htmlReporter;
 
-    private ExtentReports extentReport;
+    private final ExtentReports extentReport;
 
-    private Map<String, ExtentTest> htmlTestLogs;
+    private final Map<String, ExtentTest> htmlTestLogs;
 
     private String reportingFolder;
 
@@ -87,7 +86,6 @@ public class Reporter {
         ExtentTest extentTest = htmlTestLogs.get(methodName);
         TestLog log = TestLog.log(stepDescription, expected, actual, evidence);
         extentTest.log(log.getLogStatus(), log.toString());
-        ;
         loggerLog(log.getLogStatus(), log.toString());
     }
 
@@ -144,17 +142,17 @@ public class Reporter {
                 FileOutputStream fail = new FileOutputStream(getSummaryFolder()+"/fail.txt");
                 FileOutputStream skip = new FileOutputStream(getSummaryFolder()+"/skip.txt");
         ){
-            for(Object tests : htmlTestLogs.keySet()){
+            for(String tests : htmlTestLogs.keySet()){
                 if(htmlTestLogs.get(tests).getStatus().equals(Status.PASS)){
-                    pass.write(tests.toString().getBytes(StandardCharsets.UTF_8));
+                    pass.write(tests.getBytes(StandardCharsets.UTF_8));
                     pass.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
                 }
                 else if(htmlTestLogs.get(tests).getStatus().equals(Status.FAIL)){
-                    fail.write(tests.toString().getBytes(StandardCharsets.UTF_8));
+                    fail.write(tests.getBytes(StandardCharsets.UTF_8));
                     fail.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
                 }
                 else{
-                    skip.write(tests.toString().getBytes(StandardCharsets.UTF_8));
+                    skip.write(tests.getBytes(StandardCharsets.UTF_8));
                     skip.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
                 }
             }
