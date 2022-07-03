@@ -82,7 +82,11 @@ public class Listener implements ITestListener {
     }
     @Override
     public void onFinish(ITestContext context) {
+        // flush reporting
         reporter.stopReporting();
+        // write summary
+        reporter.writeSummaryFiles();
+
         logger.debug("onFinish reached!");
     }
 
