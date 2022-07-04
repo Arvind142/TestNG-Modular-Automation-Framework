@@ -1,6 +1,8 @@
-package com.core.framework;
+package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
+import com.core.frameowkr.annotation.TestDescription;
+import com.core.framework.htmlreporter.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.*;
@@ -21,8 +23,16 @@ public class Listener implements ITestListener {
     public void onTestStart(ITestResult result) {
         System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
-        reporter.onTestStart(testName);
         reporter.log(testName, Status.INFO, "test execution started!");
+        reporter.onTestStart(testName);
+        try {
+        	String author = result.getMethod().getConstructorOrMethod().getMethod()
+    				.getAnnotation(TestDescription.class).author();
+        	reporter.addAuthor(testName, author);
+        }
+        catch(Exception e) {
+        	logger.warn("@TestDescription is not used with "+testName);
+        }
     }
 
     public void onTestCompletion(String testName) {

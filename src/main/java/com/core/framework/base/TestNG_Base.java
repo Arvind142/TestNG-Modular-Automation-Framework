@@ -1,5 +1,7 @@
-package com.core.framework;
+package com.core.framework.base;
 
+import com.core.framework.listener.Listener;
+import com.core.framework.htmlreporter.Reporter;
 import com.google.common.base.Splitter;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -14,7 +16,7 @@ public class TestNG_Base {
 
     @BeforeClass
     public void beforeClassMethod(ITestContext context){
-        logger=Listener.reporter;
+        logger= Listener.reporter;
         className = this.getClass().getSimpleName();
     }
 

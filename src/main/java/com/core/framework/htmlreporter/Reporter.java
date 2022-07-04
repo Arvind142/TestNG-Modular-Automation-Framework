@@ -1,9 +1,10 @@
-package com.core.framework;
+package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.core.framework.listener.TestLog;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -68,6 +69,12 @@ public class Reporter {
         extentReport.attachReporter(htmlReporter);
         htmlTestLogs.put(methodName, test);
         logger.debug("html reporting initialized for " + methodName);
+    }
+    
+    public synchronized void addAuthor(String methodName,String author) {
+        ExtentTest test = htmlTestLogs.get(methodName);
+        test.assignAuthor(author);
+        logger.debug("author added for " + methodName);
     }
 
     public synchronized void log(String methodName, Status status, String log) {
