@@ -1,7 +1,7 @@
 package com.core.test_package;
 
 import com.core.framework.listener.Listener;
-import com.core.frameowkr.annotation.TestDescription;
+import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
 import com.core.utility.Web;
 import org.openqa.selenium.WebDriver;
@@ -49,7 +49,7 @@ public class Runner extends TestNG_Base {
     }
 
     @Test(dataProvider = "default")
-    @TestDescription(author = "Choudhary, Arvind")
+    @TestDescription(author = "Choudhary, Arvind", category = "valid Working case with Object... as arguments")
     public void testArgs(Object... arg2) {
         testMethod = getTestCaseName(arg2);
         logger.log(testMethod, INFO, "test Executed");
@@ -73,5 +73,36 @@ public class Runner extends TestNG_Base {
     @TestDescription(author = "Choudhary, Arvind")
     public void testFailedWithAssertfailed() {
         Assert.assertEquals(0, 1);
+    }
+    
+    @Test
+    public void parentSuccessTest() {
+    	testMethod = getTestCaseName();
+    	logger.log(testMethod,INFO,"testExecuted");
+    }
+    
+    @Test(dependsOnMethods = {"parentSuccessTest"})
+    public void childSuccessTest() {
+    	testMethod = getTestCaseName();
+    	logger.log(testMethod,INFO,"testExecuted");
+    }
+    
+    @Test
+    public void parentFailTest() {
+    	testMethod = getTestCaseName();
+    	logger.log(testMethod,INFO,"testExecuted");
+        Assert.assertEquals(0, 1);
+    }
+    
+    @Test(dependsOnMethods = {"parentFailTest"})
+    public void childFailTest() {
+    	testMethod = getTestCaseName();
+    	logger.log(testMethod,INFO,"testExecuted");
+    }
+    
+    @Test(invocationCount = 5)
+    public void invokeTestMethod() {
+    	testMethod = getTestCaseName();
+    	logger.log(testMethod,INFO,"testExecuted");
     }
 }

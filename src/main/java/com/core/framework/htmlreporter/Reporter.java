@@ -33,7 +33,9 @@ public class Reporter {
     private String summaryFolder;
 
     private final Logger logger;
-
+    
+    private String browser;
+    
     private Reporter(String reportingFolder) {
         logger = LoggerFactory.getLogger(Reporter.class);
         logger.debug("HTML Reporter called");
@@ -68,13 +70,41 @@ public class Reporter {
         ExtentTest test = extentReport.createTest(methodName);
         extentReport.attachReporter(htmlReporter);
         htmlTestLogs.put(methodName, test);
+        test.assignAuthor(System.getProperty("user.name"));
+        if(browser!=null) {
+        	test.assignDevice(browser);
+        }
         logger.debug("html reporting initialized for " + methodName);
     }
     
-    public synchronized void addAuthor(String methodName,String author) {
-        ExtentTest test = htmlTestLogs.get(methodName);
+    public synchronized void onTestStart(String methodName,String author) {
+        ExtentTest test = extentReport.createTest(methodName);
+        extentReport.attachReporter(htmlReporter);
+        htmlTestLogs.put(methodName, test);
         test.assignAuthor(author);
-        logger.debug("author added for " + methodName);
+        if(browser!=null) {
+        	test.assignDevice(browser);
+        }
+        logger.debug("html reporting initialized for " + methodName);
+    }
+    public synchronized void onTestStart(String methodName,String author,String category) {
+        ExtentTest test = extentReport.createTest(methodName);
+        extentReport.attachReporter(htmlReporter);
+        htmlTestLogs.put(methodName, test);
+        test.assignAuthor(author);
+        test.assignCategory(category);
+        if(browser!=null) {
+        	test.assignDevice(browser);
+        }
+        logger.debug("html reporting initialized for " + methodName);
+    }
+    
+    public synchronized void assignAuthor(String methodName,String author) {
+    	htmlTestLogs.get(methodName).assignAuthor(author);
+    }
+    
+    public synchronized void assignDevice(String methodName,String device) {
+    	htmlTestLogs.get(methodName).assignDevice(device);
     }
 
     public synchronized void log(String methodName, Status status, String log) {
@@ -176,6 +206,10 @@ public class Reporter {
             return;
         if (props.isEmpty())
             return;
+        try {
+        	this.browser=props.getProperty("browser");
+        }
+        catch(NullPointerException ex) { this.browser=null;}
         //adding property file details onto report
         for (Object key : props.keySet()) {
             extentReport.setSystemInfo(key.toString(), props.getProperty(key.toString()));

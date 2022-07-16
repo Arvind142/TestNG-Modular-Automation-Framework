@@ -1,7 +1,7 @@
 package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
-import com.core.frameowkr.annotation.TestDescription;
+import com.core.framework.annotation.TestDescription;
 import com.core.framework.htmlreporter.Reporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +23,31 @@ public class Listener implements ITestListener {
     public void onTestStart(ITestResult result) {
         System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
-        reporter.log(testName, Status.INFO, "test execution started!");
-        reporter.onTestStart(testName);
+        String author=null, category=null;
         try {
-        	String author = result.getMethod().getConstructorOrMethod().getMethod()
+        	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
-        	reporter.addAuthor(testName, author);
+        	author=author.equals("NotApplicable")?null:author;
+        	
+        	category = result.getMethod().getConstructorOrMethod().getMethod()
+    				.getAnnotation(TestDescription.class).category();
+        	category=category.equals("NotApplicable")?null:category;
         }
         catch(Exception e) {
         	logger.warn("@TestDescription is not used with "+testName);
         }
+        if(author!=null && category!=null) {
+        	author=author.replaceAll(" ", "&nbsp;");
+        	reporter.onTestStart(testName, author, category);
+        }
+        else if(author!=null) {
+        	author=author.replaceAll(" ", "&nbsp;");
+        	reporter.onTestStart(testName, author);
+        }
+        else {
+        	reporter.onTestStart(testName);
+        }
+        reporter.log(testName, Status.INFO, "test execution started!");
     }
 
     public void onTestCompletion(String testName) {
@@ -57,7 +72,12 @@ public class Listener implements ITestListener {
     @Override
     public void onTestSkipped(ITestResult result) {
         String testName = getTestCaseName(result);
-        reporter.log(testName, Status.SKIP, "testcase skipped!");
+        if(result.getSkipCausedBy().size()==0) {
+        	reporter.log(testName, Status.SKIP, "testcase skipped! ");
+        }
+        else {
+        	reporter.log(testName, Status.SKIP, "testcase skipped! [ cause: "+result.getSkipCausedBy().get(0).getMethodName()+" ]");
+        }
         onTestCompletion(testName);
     }
 

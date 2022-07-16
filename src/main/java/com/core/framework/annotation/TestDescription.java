@@ -1,4 +1,4 @@
-package com.core.frameowkr.annotation;
+package com.core.framework.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface TestDescription {
-	String author() default "";
+	String author() default "NotApplicable";
+	String category() default "NotApplicable";
 }
