@@ -40,8 +40,10 @@
     </logger>
 
     <logger name="io.netty" level="WARN" />
+    <logger name="org.apache.hc.client5.http.wire" level="WARN" />
     <logger name="org.asynchttpclient.netty" level="WARN" />
     <logger name="io.github.bonigarcia.wdm" level="WARN" />
+    <logger name="org.apache.hc.client5.http.wire" level="WARN" />
 
     <root level="DEBUG">
         <appender-ref ref="console-appender" />

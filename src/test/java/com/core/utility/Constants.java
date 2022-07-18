@@ -1,4 +1,4 @@
-package com.core.framework;
+package com.core.utility;
 
 public class Constants {
     /***

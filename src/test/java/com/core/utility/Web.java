@@ -1,7 +1,6 @@
 package com.core.utility;
 
-import com.core.framework.Constants;
-import com.core.framework.Listener;
+import com.core.framework.listener.Listener;
 import com.google.common.base.Function;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
