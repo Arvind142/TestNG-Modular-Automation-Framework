@@ -5,11 +5,17 @@ import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
 import com.core.utility.Web;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static com.aventstack.extentreports.Status.*;
 
 @Listeners(Listener.class)
@@ -30,7 +36,7 @@ public class Runner extends TestNG_Base {
 
     @Test
     @TestDescription(author = "Choudhary, Arvind")
-    public void testNoArgs() {
+    public void testNoArgs() throws MalformedURLException {
         testMethod = getTestCaseName();
         logger.log(testMethod, INFO, "test Executed");
         logger.log(testMethod, PASS, "FirstLOG");
@@ -38,6 +44,9 @@ public class Runner extends TestNG_Base {
         WebDriver driver = web.initializeWebDriver();
         driver.get("https://google.com");
         logger.log(testMethod,INFO,driver.getCurrentUrl());
+        logger.log(testMethod,"Title verification","Google",driver.getTitle());
+        logger.log(testMethod,"Title verification","Google",driver.getTitle(),driver);
+        logger.log(testMethod,"Title verification","Google",driver.getTitle(),logger.takeSceenShotWebPage(driver,"someName"));
         driver.quit();
     }
 
@@ -106,3 +115,4 @@ public class Runner extends TestNG_Base {
     	logger.log(testMethod,INFO,"testExecuted");
     }
 }
+

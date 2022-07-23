@@ -4,10 +4,11 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.listener.TestLog;
+import com.core.framework.testLogs.StepLogger;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Reporter {
+	
+	private static Reporter reporter=null;
 
     private final ExtentSparkReporter htmlReporter;
 
@@ -121,17 +124,27 @@ public class Reporter {
             onTestStart(methodName);
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
-        TestLog log = TestLog.log(stepDescription, expected, actual, evidence);
+        StepLogger log = StepLogger.log(stepDescription, expected, actual, evidence);
         extentTest.log(log.getLogStatus(), log.toString());
         loggerLog(log.getLogStatus(), log.toString());
     }
 
-    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual, RemoteWebDriver driver) {
+    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual) {
         if (!htmlTestLogs.containsKey(methodName)) {
             onTestStart(methodName);
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
-        TestLog log = TestLog.log(stepDescription, expected, actual, takeSceenShotWebPage(driver, stepDescription));
+        StepLogger log = StepLogger.log(stepDescription, expected, actual);
+        extentTest.log(log.getLogStatus(), log.toString());
+        loggerLog(log.getLogStatus(), log.toString());
+    }
+
+    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual, WebDriver driver) {
+        if (!htmlTestLogs.containsKey(methodName)) {
+            onTestStart(methodName);
+        }
+        ExtentTest extentTest = htmlTestLogs.get(methodName);
+        StepLogger log = StepLogger.log(stepDescription, expected, actual, takeSceenShotWebPage(driver, stepDescription));
         extentTest.log(log.getLogStatus(), log.toString());
         loggerLog(log.getLogStatus(), log.toString());
     }
@@ -149,7 +162,7 @@ public class Reporter {
         }
     }
 
-    public String takeSceenShotWebPage(RemoteWebDriver driver, String fileName) {
+    public String takeSceenShotWebPage(WebDriver driver, String fileName) {
         String folderName = reportingFolder + "/Screenshot/";
         File f = (new File(folderName));
         if (!f.exists()) {
@@ -241,18 +254,21 @@ public class Reporter {
         this.summaryFolder = summaryFolder;
     }
 
-    public static Reporter initializeReporting(String reportingFolderPath) {
-        File folder = new File(reportingFolderPath);
-        // folder check - if not present create one
-        if (!folder.exists()) {
-            folder.mkdirs();
+    public static synchronized Reporter initializeReporting(String reportingFolderPath) {
+        if(reporter==null) {
+        	File folder = new File(reportingFolderPath);
+            // folder check - if not present create one
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            String resultFolder = reportingFolderPath + "/" + String.valueOf(folder.listFiles().length + 1);
+            folder = new File(resultFolder);
+            // folder check - if not present create one
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            reporter = new Reporter(resultFolder);
         }
-        String resultFolder = reportingFolderPath + "/" + String.valueOf(folder.listFiles().length + 1);
-        folder = new File(resultFolder);
-        // folder check - if not present create one
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-        return new Reporter(resultFolder);
+        return reporter;
     }
 }

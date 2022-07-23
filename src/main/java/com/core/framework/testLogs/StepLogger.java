@@ -1,4 +1,4 @@
-package com.core.framework.listener;
+package com.core.framework.testLogs;
 
 import com.aventstack.extentreports.Status;
 
@@ -9,7 +9,7 @@ import com.aventstack.extentreports.Status;
  *
  */
 
-public class TestLog {
+public class StepLogger {
     /**
      * holds step description
      */
@@ -40,8 +40,8 @@ public class TestLog {
      * @param logStatus       log status i.e. PASS/FAIL/SKIP
      * @param attachment      url of attachment
      */
-    private TestLog(String stepDescription, String expectedValue, String actualValue, Status logStatus,
-                   String attachment) {
+    private StepLogger(String stepDescription, String expectedValue, String actualValue, Status logStatus,
+                       String attachment) {
         super();
         this.stepDescription = stepDescription;
         this.expectedValue = expectedValue;
@@ -68,8 +68,8 @@ public class TestLog {
      * @param expectedValue   additional information
      * @return Test class Object
      */
-    public static synchronized TestLog logInfo(String stepDescription, String expectedValue) {
-        return new TestLog(stepDescription, expectedValue, "", Status.INFO, null);
+    public static synchronized StepLogger logInfo(String stepDescription, String expectedValue) {
+        return new StepLogger(stepDescription, expectedValue, "", Status.INFO, null);
     }
 
     /***
@@ -79,8 +79,8 @@ public class TestLog {
      * @param expectedValue   expected value
      * @return Test class Object
      */
-    public static synchronized TestLog logSkip(String stepDescription, String expectedValue) {
-        return new TestLog(stepDescription, expectedValue, "", Status.SKIP, null);
+    public static synchronized StepLogger logSkip(String stepDescription, String expectedValue) {
+        return new StepLogger(stepDescription, expectedValue, "", Status.SKIP, null);
     }
 
     /***
@@ -90,8 +90,8 @@ public class TestLog {
      * @param expectedValue   expected value
      * @return Test class Object
      */
-    public static synchronized TestLog logPass(String stepDescription, String expectedValue) {
-        return new TestLog(stepDescription, expectedValue, expectedValue, Status.PASS, null);
+    public static synchronized StepLogger logPass(String stepDescription, String expectedValue) {
+        return new StepLogger(stepDescription, expectedValue, expectedValue, Status.PASS, null);
     }
 
     /***
@@ -102,8 +102,8 @@ public class TestLog {
      *                        statement
      * @return Test class Object
      */
-    public static synchronized TestLog logError(String stepDescription, String expectedValue) {
-        return new TestLog(stepDescription, expectedValue, "", Status.FAIL, null);
+    public static synchronized StepLogger logError(String stepDescription, String expectedValue) {
+        return new StepLogger(stepDescription, expectedValue, "", Status.FAIL, null);
     }
 
     /**
@@ -115,7 +115,7 @@ public class TestLog {
      * @param actualValue     actual results
      * @return Test class object
      */
-    public static synchronized <T> TestLog log(String stepDescription, T expectedValue, T actualValue) {
+    public static synchronized <T> StepLogger log(String stepDescription, T expectedValue, T actualValue) {
         String exp = "";
         String act = "";
 
@@ -129,7 +129,7 @@ public class TestLog {
                     act = "";
                 }
                 // if any of both of them or both are null
-                return new TestLog(stepDescription, exp, act,
+                return new StepLogger(stepDescription, exp, act,
                         (exp.equals(act) ? Status.PASS : Status.FAIL), null);
             }
 
@@ -141,8 +141,8 @@ public class TestLog {
                 if (expectedValue instanceof String[] && actualValue instanceof String[]) {
                     String[] exps = (String[]) expectedValue;
                     String[] acts = (String[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     String exps = String.valueOf(expectedValue);
                     String acts = String.valueOf(actualValue);
@@ -156,8 +156,8 @@ public class TestLog {
                 if (expectedValue instanceof Integer[] && actualValue instanceof Integer[]) {
                     Integer[] exps = (Integer[]) expectedValue;
                     Integer[] acts = (Integer[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Integer exps = (Integer) expectedValue;
                     Integer acts = (Integer) actualValue;
@@ -171,8 +171,8 @@ public class TestLog {
                 if (expectedValue instanceof Long[] && actualValue instanceof Long[]) {
                     Long[] exps = (Long[]) expectedValue;
                     Long[] acts = (Long[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Long exps = (Long) expectedValue;
                     Long acts = (Long) actualValue;
@@ -186,8 +186,8 @@ public class TestLog {
                 if (expectedValue instanceof Float[] && actualValue instanceof Float[]) {
                     Float[] exps = (Float[]) expectedValue;
                     Float[] acts = (Float[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Float exps = (Float) expectedValue;
                     Float acts = (Float) actualValue;
@@ -201,8 +201,8 @@ public class TestLog {
                 if (expectedValue instanceof Double[] && actualValue instanceof Double[]) {
                     Double[] exps = (Double[]) expectedValue;
                     Double[] acts = (Double[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Double exps = (Double) expectedValue;
                     Double acts = (Double) actualValue;
@@ -214,11 +214,11 @@ public class TestLog {
                 act = "invalid dataType";
             }
 
-            return new TestLog(stepDescription, exp, act,
+            return new StepLogger(stepDescription, exp, act,
                     (exp.equals(act) ? Status.PASS : Status.FAIL), null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new TestLog(stepDescription, "logging issue", e.getMessage(), Status.FAIL, null);
+            return new StepLogger(stepDescription, "logging issue", e.getMessage(), Status.FAIL, null);
         }
     }
 
@@ -232,8 +232,8 @@ public class TestLog {
      * @param attachment      attachment/evidence path
      * @return Test class object
      */
-    public static synchronized <T> TestLog log(String stepDescription, T expectedValue, T actualValue,
-                                               String attachment) {
+    public static synchronized <T> StepLogger log(String stepDescription, T expectedValue, T actualValue,
+                                                  String attachment) {
         String exp = "";
         String act = "";
 
@@ -247,7 +247,7 @@ public class TestLog {
                     act = "";
                 }
                 // if any of both of them or both are null
-                return new TestLog(stepDescription, exp, act,
+                return new StepLogger(stepDescription, exp, act,
                         (exp.equals(act) ? Status.PASS : Status.FAIL), null);
             }
 
@@ -259,8 +259,8 @@ public class TestLog {
                 if (expectedValue instanceof String[] && actualValue instanceof String[]) {
                     String[] exps = (String[]) expectedValue;
                     String[] acts = (String[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     String exps = (String) expectedValue;
                     String acts = (String) actualValue;
@@ -274,8 +274,8 @@ public class TestLog {
                 if (expectedValue instanceof Integer[] && actualValue instanceof Integer[]) {
                     Integer[] exps = (Integer[]) expectedValue;
                     Integer[] acts = (Integer[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Integer exps = (Integer) expectedValue;
                     Integer acts = (Integer) actualValue;
@@ -289,8 +289,8 @@ public class TestLog {
                 if (expectedValue instanceof Long[] && actualValue instanceof Long[]) {
                     Long[] exps = (Long[]) expectedValue;
                     Long[] acts = (Long[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Long exps = (Long) expectedValue;
                     Long acts = (Long) actualValue;
@@ -304,8 +304,8 @@ public class TestLog {
                 if (expectedValue instanceof Float[] && actualValue instanceof Float[]) {
                     Float[] exps = (Float[]) expectedValue;
                     Float[] acts = (Float[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Float exps = (Float) expectedValue;
                     Float acts = (Float) actualValue;
@@ -319,8 +319,8 @@ public class TestLog {
                 if (expectedValue instanceof Double[] && actualValue instanceof Double[]) {
                     Double[] exps = (Double[]) expectedValue;
                     Double[] acts = (Double[]) actualValue;
-                    exp = TestLog.getPrintableStringOfArray(exps);
-                    act = TestLog.getPrintableStringOfArray(acts);
+                    exp = StepLogger.getPrintableStringOfArray(exps);
+                    act = StepLogger.getPrintableStringOfArray(acts);
                 } else {
                     Double exps = (Double) expectedValue;
                     Double acts = (Double) actualValue;
@@ -332,11 +332,11 @@ public class TestLog {
                 act = "invalid dataType";
             }
 
-            return new TestLog(stepDescription, exp, act,
+            return new StepLogger(stepDescription, exp, act,
                     (exp.equals(act) ? Status.PASS : Status.FAIL), attachment);
         } catch (Exception e) {
             e.printStackTrace();
-            return new TestLog(stepDescription, "logging issue", e.getMessage(), Status.FAIL, attachment);
+            return new StepLogger(stepDescription, "logging issue", e.getMessage(), Status.FAIL, attachment);
         }
     }
 
@@ -361,6 +361,26 @@ public class TestLog {
      */
     @Override
     public String toString() {
+        String stepLog="<details>"+
+                                "<summary>"+stepDescription+"</summary>"+
+                                "<table>" +
+                                    "<thead>"+
+                                        "<th>Expected Condition</th>"+
+                                        "<th>Actual Condition</th>"+
+                                        "<th>Evidence</th>"+
+                                    "</thead>"+
+                                    "<tbody>"+
+                                        "<td>"+(expectedValue!=null?expectedValue:"NA")+"</td>"+
+                                        "<td>"+(actualValue!=null?actualValue:"NA")+"</td>"+
+                                        "<td>"+(attachment!=null?attachment:"NA")+"</td>"+
+                                    "</tbody>"+
+                                "</table>"+
+                            "</details>";
+        return stepLog;
+    }
+
+
+    public String toStringOlderOne() {
         if (isNullOrEmpty(expectedValue) && isNullOrEmpty(actualValue) && isNullOrEmpty(attachment)) {
             return " | Description: " + stepDescription + " | ";
         } else if (isNullOrEmpty(actualValue) && isNullOrEmpty(expectedValue) && !isNullOrEmpty(attachment)) {
