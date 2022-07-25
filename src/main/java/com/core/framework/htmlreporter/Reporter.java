@@ -9,9 +9,10 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -144,7 +145,7 @@ public class Reporter {
             onTestStart(methodName);
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
-        StepLogger log = StepLogger.log(stepDescription, expected, actual, takeSceenShotWebPage(driver, stepDescription));
+        StepLogger log = StepLogger.log(stepDescription, expected, actual, takeScreenShotWebPage(driver, stepDescription));
         extentTest.log(log.getLogStatus(), log.toString());
         loggerLog(log.getLogStatus(), log.toString());
     }
@@ -162,8 +163,8 @@ public class Reporter {
         }
     }
 
-    public String takeSceenShotWebPage(WebDriver driver, String fileName) {
-        String folderName = reportingFolder + "/Screenshot/";
+    public String takeScreenShotWebPage(WebDriver driver, String fileName) {
+        String folderName = assetFolder + "/";
         File f = (new File(folderName));
         if (!f.exists()) {
             logger.debug((f.mkdirs() ? "Screenshot folder created" : "Screenshot folder creation failed"));
@@ -176,7 +177,7 @@ public class Reporter {
             e.printStackTrace();
             return "";
         }
-        return "Screenshot/" + fileName + ".jpg";
+        return "assets/" + fileName + ".jpg";
     }
 
 

@@ -5,8 +5,6 @@ import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
 import com.core.utility.Web;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
@@ -14,7 +12,6 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import static com.aventstack.extentreports.Status.*;
 
@@ -45,8 +42,8 @@ public class Runner extends TestNG_Base {
         driver.get("https://google.com");
         logger.log(testMethod,INFO,driver.getCurrentUrl());
         logger.log(testMethod,"Title verification","Google",driver.getTitle());
-        logger.log(testMethod,"Title verification","Google",driver.getTitle(),driver);
-        logger.log(testMethod,"Title verification","Google",driver.getTitle(),logger.takeSceenShotWebPage(driver,"someName"));
+        logger.log(testMethod,"Title verification","Google",driver.getTitle(),logger.takeScreenShotWebPage(driver,"someName"));
+        logger.log(testMethod,"Title verification Mismatch","Google_Expected",driver.getTitle(),driver);
         driver.quit();
     }
 

@@ -58,7 +58,7 @@ public class Listener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = getTestCaseName(result);
-        reporter.log(testName, Status.PASS, "testcase passed!");
+//        reporter.log(testName, Status.PASS, "testcase passed / No Exception recorded!");
         onTestCompletion(testName);
     }
 
