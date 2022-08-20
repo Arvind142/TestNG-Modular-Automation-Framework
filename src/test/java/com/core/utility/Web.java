@@ -3,6 +3,7 @@ package com.core.utility;
 import com.core.framework.listener.Listener;
 import com.google.common.base.Function;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -26,6 +27,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.Properties;
 
+@Slf4j
 public class Web {
     /***
      * to initialize webdriver based on sent browserName
@@ -51,6 +53,7 @@ public class Web {
                         break;
                     case "FIREFOX":
                     case "FOX":
+                    case "FF":
                         WebDriverManager.firefoxdriver().setup();
                         driver = new FirefoxDriver();
                         break;
@@ -74,6 +77,7 @@ public class Web {
                         break;
                     case "FIREFOX":
                     case "FOX":
+                    case "FF":
                         driver = new RemoteWebDriver(url, new FirefoxOptions());
                         break;
                     default:
