@@ -362,7 +362,7 @@ public class StepLogger {
     @Override
     public String toString() {
         String stepLog="<details>"+
-                                "<summary>"+stepDescription+"</summary>"+
+                                "<summary><b><i>"+stepDescription+"</i></b></summary>"+
                                 "<table>" +
                                     "<thead>"+
                                         "<th>Expected Condition</th>"+

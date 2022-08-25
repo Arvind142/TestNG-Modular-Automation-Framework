@@ -10,12 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +38,7 @@ public class Reporter {
     
     private Reporter(String reportingFolder) {
         log.debug("HTML Reporter called");
+        log.debug("Output folder created @ "+reportingFolder);
         // creating asset folder
         assetFolder = reportingFolder + "/assets";
         File folder = new File(assetFolder);
