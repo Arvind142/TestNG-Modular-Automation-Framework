@@ -29,21 +29,15 @@
 
     <!-- testng logger to skip unnecessary logs -->
 
-    <logger name="org.testng.internal.Utils" level="WARN">
+    <logger name="org.testng" level="WARN">
         <appender-ref ref="console-appender" />
         <appender-ref ref="file-appender" />
     </logger>
 
-    <logger name="org.testng.internal.Graph" level="WARN">
-        <appender-ref ref="console-appender" />
-        <appender-ref ref="file-appender" />
-    </logger>
-
-    <logger name="io.netty" level="WARN" />
-    <logger name="org.apache.hc.client5.http.wire" level="WARN" />
-    <logger name="org.asynchttpclient.netty" level="WARN" />
+    <logger name="io.netty" level="OFF" />
+    <logger name="org.apache" level="OFF" />
+    <logger name="org.asynchttpclient.netty" level="OFF" />
     <logger name="io.github.bonigarcia.wdm" level="WARN" />
-    <logger name="org.apache.hc.client5.http.wire" level="WARN" />
 
     <root level="DEBUG">
         <appender-ref ref="console-appender" />

@@ -3,13 +3,13 @@ package com.core.framework.listener;
 import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.htmlreporter.Reporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Slf4j
 public class Listener implements ITestListener {
     //base Property
     public static Properties property;
@@ -17,7 +17,6 @@ public class Listener implements ITestListener {
     public String reportingFolder;
     // html reporter
     public static Reporter reporter;
-    public static Logger logger;
 
     @Override
     public void onTestStart(ITestResult result) {
@@ -34,7 +33,7 @@ public class Listener implements ITestListener {
         	category=category.equals("NotApplicable")?null:category;
         }
         catch(Exception e) {
-        	logger.warn("@TestDescription is not used with "+testName);
+        	log.warn("@TestDescription is not used with "+testName);
         }
         if(author!=null && category!=null) {
         	author=author.replaceAll(" ", "&nbsp;");
@@ -58,7 +57,7 @@ public class Listener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = getTestCaseName(result);
-        reporter.log(testName, Status.PASS, "testcase passed!");
+//        reporter.log(testName, Status.PASS, "testcase passed / No Exception recorded!");
         onTestCompletion(testName);
     }
 
@@ -90,18 +89,16 @@ public class Listener implements ITestListener {
 
     @Override
     public void onStart(ITestContext context) {
-        // logger initialized
-        logger = LoggerFactory.getLogger(Listener.class);
 
-        logger.debug("logger initialized!");
+        log.debug("log initialized!");
 
         // read config to start with base
         property = readProperty("src/test/resources/Execution-settings.properties");
 
         if (property != null) {
-            logger.debug("execution property read");
+            log.debug("execution property read");
         } else {
-            logger.error("failed to read property file");
+            log.error("failed to read property file");
         }
         // updating reporting folder
         reportingFolder = "test-output";
@@ -121,7 +118,7 @@ public class Listener implements ITestListener {
         // write summary
         reporter.writeSummaryFiles();
 
-        logger.debug("onFinish reached!");
+        log.debug("onFinish reached!");
     }
 
     // _______________ Helper Methods _______________

@@ -4,13 +4,12 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.listener.TestLog;
+import com.core.framework.testLogs.StepLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openqa.selenium.WebDriver;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+@Slf4j
 public class Reporter {
+	
+	private static Reporter reporter=null;
 
     private final ExtentSparkReporter htmlReporter;
 
@@ -31,25 +33,23 @@ public class Reporter {
     private String assetFolder;
 
     private String summaryFolder;
-
-    private final Logger logger;
     
-    private String browser;
+    private String deviceDetails;
     
     private Reporter(String reportingFolder) {
-        logger = LoggerFactory.getLogger(Reporter.class);
-        logger.debug("HTML Reporter called");
+        log.debug("HTML Reporter called");
+        log.debug("Output folder created @ "+reportingFolder);
         // creating asset folder
         assetFolder = reportingFolder + "/assets";
         File folder = new File(assetFolder);
-        logger.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
-        logger.debug("Asset folder created @ " + folder.getAbsolutePath());
+        log.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
+        log.debug("Asset folder created @ " + folder.getAbsolutePath());
 
         // creating summary folder
         summaryFolder = reportingFolder + "/summary";
         folder = new File(summaryFolder);
-        logger.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
-        logger.debug("Summary folder created @ " + folder.getAbsolutePath());
+        log.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
+        log.debug("Summary folder created @ " + folder.getAbsolutePath());
 
         // reporting initialized
         htmlReporter = new ExtentSparkReporter(reportingFolder + "/result.html");
@@ -63,7 +63,7 @@ public class Reporter {
                 //do Nothing go with default config
             }
         }
-        logger.debug("html reporting initialized");
+        log.debug("html reporting initialized");
     }
 
     public synchronized void onTestStart(String methodName) {
@@ -71,21 +71,21 @@ public class Reporter {
         extentReport.attachReporter(htmlReporter);
         htmlTestLogs.put(methodName, test);
         test.assignAuthor(System.getProperty("user.name"));
-        if(browser!=null) {
-        	test.assignDevice(browser);
+        if(deviceDetails !=null) {
+        	test.assignDevice(deviceDetails);
         }
-        logger.debug("html reporting initialized for " + methodName);
+        log.debug("html reporting initialized for " + methodName);
     }
-    
+
     public synchronized void onTestStart(String methodName,String author) {
         ExtentTest test = extentReport.createTest(methodName);
         extentReport.attachReporter(htmlReporter);
         htmlTestLogs.put(methodName, test);
         test.assignAuthor(author);
-        if(browser!=null) {
-        	test.assignDevice(browser);
+        if(deviceDetails !=null) {
+        	test.assignDevice(deviceDetails);
         }
-        logger.debug("html reporting initialized for " + methodName);
+        log.debug("html reporting initialized for " + methodName);
     }
     public synchronized void onTestStart(String methodName,String author,String category) {
         ExtentTest test = extentReport.createTest(methodName);
@@ -93,16 +93,16 @@ public class Reporter {
         htmlTestLogs.put(methodName, test);
         test.assignAuthor(author);
         test.assignCategory(category);
-        if(browser!=null) {
-        	test.assignDevice(browser);
+        if(deviceDetails !=null) {
+        	test.assignDevice(deviceDetails);
         }
-        logger.debug("html reporting initialized for " + methodName);
+        log.debug("html reporting initialized for " + methodName);
     }
-    
+
     public synchronized void assignAuthor(String methodName,String author) {
     	htmlTestLogs.get(methodName).assignAuthor(author);
     }
-    
+
     public synchronized void assignDevice(String methodName,String device) {
     	htmlTestLogs.get(methodName).assignDevice(device);
     }
@@ -121,17 +121,27 @@ public class Reporter {
             onTestStart(methodName);
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
-        TestLog log = TestLog.log(stepDescription, expected, actual, evidence);
+        StepLogger log = StepLogger.log(stepDescription, expected, actual, evidence);
         extentTest.log(log.getLogStatus(), log.toString());
         loggerLog(log.getLogStatus(), log.toString());
     }
 
-    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual, RemoteWebDriver driver) {
+    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual) {
         if (!htmlTestLogs.containsKey(methodName)) {
             onTestStart(methodName);
         }
         ExtentTest extentTest = htmlTestLogs.get(methodName);
-        TestLog log = TestLog.log(stepDescription, expected, actual, takeSceenShotWebPage(driver, stepDescription));
+        StepLogger log = StepLogger.log(stepDescription, expected, actual);
+        extentTest.log(log.getLogStatus(), log.toString());
+        loggerLog(log.getLogStatus(), log.toString());
+    }
+
+    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual, WebDriver driver) {
+        if (!htmlTestLogs.containsKey(methodName)) {
+            onTestStart(methodName);
+        }
+        ExtentTest extentTest = htmlTestLogs.get(methodName);
+        StepLogger log = StepLogger.log(stepDescription, expected, actual, takeScreenShotWebPage(driver, stepDescription));
         extentTest.log(log.getLogStatus(), log.toString());
         loggerLog(log.getLogStatus(), log.toString());
     }
@@ -139,21 +149,21 @@ public class Reporter {
     private void loggerLog(Status status, String message) {
         switch (status) {
             case FAIL:
-                logger.error("[ testlog Status : " + status + ", testlog : " + message + "]");
+                log.error("[ testlog Status : " + status + ", testlog : " + message + "]");
                 break;
             case WARNING:
-                logger.warn("[ testlog Status : " + status + ", testlog : " + message + "]");
+                log.warn("[ testlog Status : " + status + ", testlog : " + message + "]");
                 break;
             default:
-                logger.info("[ testlog Status : " + status + ", testlog : " + message + "]");
+                log.info("[ testlog Status : " + status + ", testlog : " + message + "]");
         }
     }
 
-    public String takeSceenShotWebPage(RemoteWebDriver driver, String fileName) {
-        String folderName = reportingFolder + "/Screenshot/";
+    public String takeScreenShotWebPage(WebDriver driver, String fileName) {
+        String folderName = assetFolder + "/";
         File f = (new File(folderName));
         if (!f.exists()) {
-            logger.debug((f.mkdirs() ? "Screenshot folder created" : "Screenshot folder creation failed"));
+            log.debug((f.mkdirs() ? "Screenshot folder created" : "Screenshot folder creation failed"));
         }
         String imgPath = folderName + fileName + ".jpg";
         File s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -163,13 +173,13 @@ public class Reporter {
             e.printStackTrace();
             return "";
         }
-        return "Screenshot/" + fileName + ".jpg";
+        return "assets/" + fileName + ".jpg";
     }
 
 
     public boolean stopReporting() {
         extentReport.flush();
-        logger.debug("report flush");
+        log.debug("report flush");
         return true;
     }
 
@@ -202,14 +212,15 @@ public class Reporter {
 
 
     public void setSystemVars(Properties props) {
+
         if (props == null)
             return;
         if (props.isEmpty())
             return;
         try {
-        	this.browser=props.getProperty("browser");
+        	this.deviceDetails = System.getProperty("os.name")+"/"+props.getProperty("browser");
         }
-        catch(NullPointerException ex) { this.browser=null;}
+        catch(NullPointerException ex) { this.deviceDetails =null;}
         //adding property file details onto report
         for (Object key : props.keySet()) {
             extentReport.setSystemInfo(key.toString(), props.getProperty(key.toString()));
@@ -241,18 +252,21 @@ public class Reporter {
         this.summaryFolder = summaryFolder;
     }
 
-    public static Reporter initializeReporting(String reportingFolderPath) {
-        File folder = new File(reportingFolderPath);
-        // folder check - if not present create one
-        if (!folder.exists()) {
-            folder.mkdirs();
+    public static synchronized Reporter initializeReporting(String reportingFolderPath) {
+        if(reporter==null) {
+        	File folder = new File(reportingFolderPath);
+            // folder check - if not present create one
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            String resultFolder = reportingFolderPath + "/" + String.valueOf(folder.listFiles().length + 1);
+            folder = new File(resultFolder);
+            // folder check - if not present create one
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            reporter = new Reporter(resultFolder);
         }
-        String resultFolder = reportingFolderPath + "/" + String.valueOf(folder.listFiles().length + 1);
-        folder = new File(resultFolder);
-        // folder check - if not present create one
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-        return new Reporter(resultFolder);
+        return reporter;
     }
 }

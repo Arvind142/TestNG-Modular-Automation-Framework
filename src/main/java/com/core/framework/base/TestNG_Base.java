@@ -3,20 +3,22 @@ package com.core.framework.base;
 import com.core.framework.listener.Listener;
 import com.core.framework.htmlreporter.Reporter;
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import java.util.List;
 
+@Slf4j
 public class TestNG_Base {
-    protected Reporter logger;
+    protected Reporter reporter;
     protected String className;
 
     protected String testMethod;
 
     @BeforeClass
     public void beforeClassMethod(ITestContext context){
-        logger= Listener.reporter;
+        reporter = Listener.reporter;
         className = this.getClass().getSimpleName();
     }
 
