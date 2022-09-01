@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 public @interface TestDescription {
 	String author() default "NotApplicable";
 	String category() default "NotApplicable";
+
+	String isBDD() default "NotApplicable";
 }

@@ -5,6 +5,10 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.core.framework.testLogs.StepLogger;
+import com.intuit.karate.Results;
+import com.intuit.karate.core.Feature;
+import com.intuit.karate.core.ScenarioResult;
+import com.intuit.karate.core.StepResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -14,8 +18,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Reporter {
@@ -180,6 +186,7 @@ public class Reporter {
     public boolean stopReporting() {
         extentReport.flush();
         log.debug("report flush");
+        log.info("Report url: "+htmlReporter.getFile().getAbsolutePath());
         return true;
     }
 
@@ -226,7 +233,6 @@ public class Reporter {
             extentReport.setSystemInfo(key.toString(), props.getProperty(key.toString()));
         }
     }
-
 
     public String getReportingFolder() {
         return reportingFolder;

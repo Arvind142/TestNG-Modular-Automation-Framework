@@ -2,6 +2,7 @@ package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
+import com.core.framework.htmlreporter.BDDReporter;
 import com.core.framework.htmlreporter.Reporter;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
@@ -18,8 +19,14 @@ public class Listener implements ITestListener {
     // html reporter
     public static Reporter reporter;
 
+    // html reporter
+    public static BDDReporter bddReporter;
+
     @Override
     public void onTestStart(ITestResult result) {
+        // check if its is cucumber based execution
+        if(isItKarateBasedRunner(result))
+            return;
         System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
         String author=null, category=null;
@@ -56,6 +63,9 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
+        // check if its is cucumber based execution
+        if(isItKarateBasedRunner(result))
+            return;
         String testName = getTestCaseName(result);
 //        reporter.log(testName, Status.PASS, "testcase passed / No Exception recorded!");
         onTestCompletion(testName);
@@ -63,6 +73,9 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
+        // check if its is cucumber based execution
+        if(isItKarateBasedRunner(result))
+            return;
         String testName = getTestCaseName(result);
         reporter.log(testName, Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
         onTestCompletion(testName);
@@ -70,6 +83,9 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestSkipped(ITestResult result) {
+        // check if its is cucumber based execution
+        if(isItKarateBasedRunner(result))
+            return;
         String testName = getTestCaseName(result);
         if(result.getSkipCausedBy().size()==0) {
         	reporter.log(testName, Status.SKIP, "testcase skipped! ");
@@ -82,6 +98,9 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestFailedWithTimeout(ITestResult result) {
+        // check if its is cucumber based execution
+        if(isItKarateBasedRunner(result))
+            return;
         String testName = getTestCaseName(result);
         reporter.log(testName, Status.FAIL, "testcase failed with timeout!");
         this.onTestFailure(result);
@@ -109,6 +128,7 @@ public class Listener implements ITestListener {
         // loading properties data into report
         reporter.setSystemVars(property);
 
+        bddReporter = BDDReporter.initializeReporting(reporter.getReportingFolder());
     }
 
     @Override
@@ -155,5 +175,19 @@ public class Listener implements ITestListener {
         }
 
         return properties;
+    }
+
+    public boolean isItKarateBasedRunner(ITestResult result){
+        try{
+            String isBDD = result.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(TestDescription.class).isBDD();
+            if(isBDD.equalsIgnoreCase("NotApplicable")){
+                return false;
+            }
+            return true;
+        }
+        catch(Exception e){
+            return false;
+        }
     }
 }
