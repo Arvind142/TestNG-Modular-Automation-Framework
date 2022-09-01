@@ -3,7 +3,6 @@
 <suite name="Suite" thread-count="12" parallel="methods">
     <test name="Test">
         <classes>
-            <parameter name="" value=""></parameter>
             <class name="com.core.test_package.BDDRunner"></class>
         </classes>
     </test> <!-- Test -->
