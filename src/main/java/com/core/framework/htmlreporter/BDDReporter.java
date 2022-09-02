@@ -2,27 +2,15 @@ package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.gherkin.model.And;
 import com.aventstack.extentreports.gherkin.model.Given;
 import com.aventstack.extentreports.gherkin.model.Then;
 import com.aventstack.extentreports.gherkin.model.When;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.testLogs.StepLogger;
+import com.core.framework.listener.Listener;
 import com.intuit.karate.Results;
 import com.intuit.karate.core.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -30,8 +18,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BDDReporter {
     private static BDDReporter reporter=null;
-
-    private ExtentSparkReporter htmlReporter;
 
     private ExtentReports extentReport;
 
@@ -55,7 +41,6 @@ public class BDDReporter {
     public boolean stopReporting() {
         extentReport.flush();
         log.debug("report flush");
-        log.info("Report url: "+htmlReporter.getFile().getAbsolutePath());
         return true;
     }
 
@@ -99,42 +84,28 @@ public class BDDReporter {
         this.summaryFolder = summaryFolder;
     }
 
-    public static synchronized BDDReporter initializeReporting(String reportingFolderPath) {
+    public static synchronized BDDReporter initializeReporting() {
         if(reporter==null) {
-            File folder = new File(reportingFolderPath);
-            // folder check - if not present create one
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            reporter = new BDDReporter(reportingFolderPath);
+            reporter = new BDDReporter();
         }
         return reporter;
     }
-    private BDDReporter(String resultFolder){
+    private BDDReporter(){
         log.trace("constructor initialized");
-        this.reportingFolder = resultFolder;
+        this.reportingFolder = Listener.reporter.getReportingFolder();
     }
 
     public void initializeReportingVars(){
         log.debug("BDD HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
         // reporting initialized
-        htmlReporter = new ExtentSparkReporter(reportingFolder + "/cucumber-results.html");
+        this.extentReport = Listener.reporter.getExtentReport();
         this.reportingFolder = reportingFolder;
-        extentReport = new ExtentReports();
-        if (new File("src/test/resources/extent-config.xml").exists()) {
-            try {
-                htmlReporter.loadXMLConfig("src/test/resources/extent-config.xml");
-            } catch (Exception e) {
-                //do Nothing go with default config
-            }
-        }
         log.debug("html reporting initialized");
     }
 
     public void generateBDDReport(Results results){
         try{
-            extentReport.attachReporter(htmlReporter);
             List<ScenarioResult> scenarioResults = getScenarioResults(results);
             scenarioResults.forEach(scenarioResult->{
                 Feature feature = getFeature(scenarioResult);
@@ -166,7 +137,9 @@ public class BDDReporter {
             return extentTest;
         }
         this.featureName=feature.getName();
-        return extentReport.createTest(com.aventstack.extentreports.gherkin.model.Feature.class,feature.getName(),feature.getDescription());
+        ExtentTest test = extentReport.createTest(com.aventstack.extentreports.gherkin.model.Feature.class,feature.getName(),feature.getDescription());
+        test.assignCategory("BDD");
+        return test;
     }
 
     public ExtentTest createScenarioNode(ExtentTest featureNode,String scenarioName){

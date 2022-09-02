@@ -258,6 +258,10 @@ public class Reporter {
         this.summaryFolder = summaryFolder;
     }
 
+    ExtentReports getExtentReport(){
+        return this.extentReport;
+    }
+
     public static synchronized Reporter initializeReporting(String reportingFolderPath) {
         if(reporter==null) {
         	File folder = new File(reportingFolderPath);
