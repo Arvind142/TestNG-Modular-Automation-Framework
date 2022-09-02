@@ -40,6 +40,8 @@
 
     <!-- dependencies Resolution -->
     <dependencies>
+
+
         <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
@@ -47,19 +49,20 @@
             <version>5.1.0</version>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>4.0.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-devtools-v104</artifactId>
             <version>4.4.0</version>
-        </dependency><!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -108,6 +111,14 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.11</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Karate based api testing -->
+        <!-- https://mvnrepository.com/artifact/com.intuit.karate/karate-junit4 -->
+        <dependency>
+            <groupId>com.intuit.karate</groupId>
+            <artifactId>karate-junit4</artifactId>
+            <version>1.2.0</version>
         </dependency>
 
     </dependencies>

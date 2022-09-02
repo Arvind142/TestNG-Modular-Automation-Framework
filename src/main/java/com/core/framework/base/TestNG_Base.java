@@ -1,5 +1,6 @@
 package com.core.framework.base;
 
+import com.core.framework.htmlreporter.BDDReporter;
 import com.core.framework.listener.Listener;
 import com.core.framework.htmlreporter.Reporter;
 import com.google.common.base.Splitter;
@@ -12,6 +13,7 @@ import java.util.List;
 @Slf4j
 public class TestNG_Base {
     protected Reporter reporter;
+    protected BDDReporter bddReporter;
     protected String className;
 
     protected String testMethod;
@@ -19,6 +21,7 @@ public class TestNG_Base {
     @BeforeClass
     public void beforeClassMethod(ITestContext context){
         reporter = Listener.reporter;
+        bddReporter = Listener.bddReporter;
         className = this.getClass().getSimpleName();
     }
 

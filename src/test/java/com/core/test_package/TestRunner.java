@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 import static com.aventstack.extentreports.Status.*;
 @Slf4j
 @Listeners(Listener.class)
-public class Runner extends TestNG_Base {
+public class TestRunner extends TestNG_Base {
 	@DataProvider(name = "default")
 	public Object[][] dataProvider() {
 		Object[][] arg = new Object[8][1];
