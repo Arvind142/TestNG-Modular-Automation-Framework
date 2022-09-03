@@ -10,6 +10,14 @@ import com.core.framework.listener.Listener;
 import com.intuit.karate.Results;
 import com.intuit.karate.core.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -111,7 +119,7 @@ public class BDDReporter {
                 Feature feature = getFeature(scenarioResult);
                 ExtentTest featureNode = createFeatureNode(feature);
                 Scenario scenario = scenarioResult.getScenario();
-                ExtentTest scenarioNode = createScenarioNode(featureNode,scenario.getName());
+                ExtentTest scenarioNode = createScenarioNode(featureNode,scenario);
                 scenarioResult.getStepResults().forEach(stepResult -> {
                     addScenarioStep(scenarioNode,stepResult.getStep(),stepResult.getResult());
                 });
@@ -137,17 +145,27 @@ public class BDDReporter {
             return extentTest;
         }
         this.featureName=feature.getName();
-        ExtentTest test = extentReport.createTest(com.aventstack.extentreports.gherkin.model.Feature.class,feature.getName(),feature.getDescription());
-        test.assignCategory("BDD");
-        return test;
+        extentTest = extentReport.createTest(com.aventstack.extentreports.gherkin.model.Feature.class,feature.getName(),feature.getDescription());
+        if(feature.getTags()!=null){
+            if(feature.getTags().size()!=0){
+                extentTest.assignCategory(convertTagArraytoStringArray(feature.getTags()));
+            }
+        }
+        return extentTest;
     }
 
-    public ExtentTest createScenarioNode(ExtentTest featureNode,String scenarioName){
-        if(this.scenarioName.equalsIgnoreCase(scenarioName)){
+    public ExtentTest createScenarioNode(ExtentTest featureNode,Scenario scenario){
+        if(this.scenarioName.equalsIgnoreCase(scenario.getName())){
             return extentTest;
         }
-        this.scenarioName=scenarioName;
-        return featureNode.createNode(com.aventstack.extentreports.gherkin.model.Scenario.class,scenarioName);
+        this.scenarioName=scenario.getName();
+        extentTest = featureNode.createNode(com.aventstack.extentreports.gherkin.model.Scenario.class,this.scenarioName);
+        if(scenario.getTags()!=null){
+            if(scenario.getTags().size()!=0){
+                extentTest.assignCategory(convertTagArraytoStringArray(scenario.getTags()));
+            }
+        }
+        return extentTest;
     }
 
     public void addScenarioStep(ExtentTest scenarioNode, Step step, Result stepResult){
@@ -197,5 +215,13 @@ public class BDDReporter {
                 stepNode.skip("");
                 break;
         }
+    }
+    public String[] convertTagArraytoStringArray(List<Tag> tagList){
+        String[] arr = new String[tagList.size()];
+        for(int index=0;index<arr.length;index++){
+            arr[index]=tagList.get(index).getName();
+            index++;
+        }
+        return arr;
     }
 }
