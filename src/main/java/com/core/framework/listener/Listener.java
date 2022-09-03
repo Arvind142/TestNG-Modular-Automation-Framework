@@ -128,7 +128,7 @@ public class Listener implements ITestListener {
         // loading properties data into report
         reporter.setSystemVars(property);
 
-        bddReporter = BDDReporter.initializeReporting(reporter.getReportingFolder());
+        bddReporter = BDDReporter.initializeReporting();
     }
 
     @Override
@@ -181,10 +181,7 @@ public class Listener implements ITestListener {
         try{
             String isBDD = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(TestDescription.class).isBDD();
-            if(isBDD.equalsIgnoreCase("NotApplicable")){
-                return false;
-            }
-            return true;
+            return !(isBDD.equalsIgnoreCase("NotApplicable"));
         }
         catch(Exception e){
             return false;
