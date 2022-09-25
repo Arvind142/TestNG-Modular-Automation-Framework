@@ -6,6 +6,7 @@ import com.aventstack.extentreports.gherkin.model.And;
 import com.aventstack.extentreports.gherkin.model.Given;
 import com.aventstack.extentreports.gherkin.model.Then;
 import com.aventstack.extentreports.gherkin.model.When;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.core.framework.listener.Listener;
 import com.intuit.karate.Results;
 import com.intuit.karate.core.*;
@@ -47,7 +48,7 @@ public class BDDReporter {
 
 
     public boolean stopReporting() {
-        extentReport.flush();
+        this.extentReport.flush();
         log.debug("report flush");
         return true;
     }
@@ -107,8 +108,16 @@ public class BDDReporter {
         log.debug("BDD HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
         // reporting initialized
-        this.extentReport = Listener.reporter.getExtentReport();
-        this.reportingFolder = reportingFolder;
+        ExtentSparkReporter htmlReporter = new ExtentSparkReporter(reportingFolder + "/cucumber-result.html");
+        this.extentReport = new ExtentReports();
+        if (new File("src/test/resources/extent-config.xml").exists()) {
+            try {
+                htmlReporter.loadXMLConfig("src/test/resources/extent-config.xml");
+            } catch (Exception e) {
+                //do Nothing go with default config
+            }
+        }
+        extentReport.attachReporter(htmlReporter);
         log.debug("html reporting initialized");
     }
 
@@ -146,10 +155,8 @@ public class BDDReporter {
         }
         this.featureName=feature.getName();
         extentTest = extentReport.createTest(com.aventstack.extentreports.gherkin.model.Feature.class,feature.getName(),feature.getDescription());
-        if(feature.getTags()!=null){
-            if(feature.getTags().size()!=0){
-                extentTest.assignCategory(convertTagArraytoStringArray(feature.getTags()));
-            }
+        if(feature.getTags()!=null && feature.getTags().size()!=0){
+            extentTest.assignCategory(getTags(feature.getTags()));
         }
         return extentTest;
     }
@@ -159,11 +166,9 @@ public class BDDReporter {
             return extentTest;
         }
         this.scenarioName=scenario.getName();
-        extentTest = featureNode.createNode(com.aventstack.extentreports.gherkin.model.Scenario.class,this.scenarioName);
-        if(scenario.getTags()!=null){
-            if(scenario.getTags().size()!=0){
-                extentTest.assignCategory(convertTagArraytoStringArray(scenario.getTags()));
-            }
+        extentTest = featureNode.createNode(com.aventstack.extentreports.gherkin.model.Scenario.class,scenarioName);
+        if(scenario.getTags()!=null && scenario.getTags().size()!=0){
+            extentTest.assignCategory(getTags(scenario.getTags()));
         }
         return extentTest;
     }
@@ -216,11 +221,10 @@ public class BDDReporter {
                 break;
         }
     }
-    public String[] convertTagArraytoStringArray(List<Tag> tagList){
+    public String[] getTags(List<Tag> tagList){
         String[] arr = new String[tagList.size()];
-        for(int index=0;index<arr.length;index++){
-            arr[index]=tagList.get(index).getName();
-            index++;
+        for(int i=0;i<arr.length;i++){
+            arr[i]=tagList.get(i).getName();
         }
         return arr;
     }
