@@ -217,6 +217,9 @@ public class Reporter {
         }
     }
 
+    public ExtentSparkReporter getHtmlReporter() {
+        return htmlReporter;
+    }
 
     public void setSystemVars(Properties props) {
 
