@@ -1,5 +1,6 @@
 package com.core.utility;
 
+import com.core.framework.constant.ReportingConst;
 import com.core.framework.htmlreporter.Reporter;
 import com.core.framework.listener.Listener;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ public class Library {
 	Properties globalConfig = Listener.property;
 
 	public String extractPayloadToText(String fileName,String text) {
-		String folderName = reporter.getAssetFolder() + "/";
+		String folderName = reporter.getReportingFolder() + ReportingConst.payloadFolder;
 		File f = (new File(folderName));
 		if (!f.exists()) {
 			log.debug((f.mkdirs() ? "Payload folder created" : "Payload folder creation failed"));
@@ -32,6 +33,6 @@ public class Library {
 			e.printStackTrace();
 			return "";
 		}
-		return "assets/" + fileName+".txt";
+		return ReportingConst.payloadFolder + fileName+".txt";
 	}
 }

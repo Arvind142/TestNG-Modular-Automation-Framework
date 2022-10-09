@@ -7,6 +7,7 @@ import com.aventstack.extentreports.gherkin.model.Given;
 import com.aventstack.extentreports.gherkin.model.Then;
 import com.aventstack.extentreports.gherkin.model.When;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.core.framework.constant.ReportingConst;
 import com.core.framework.listener.Listener;
 import com.intuit.karate.Results;
 import com.intuit.karate.core.*;
@@ -108,7 +109,7 @@ public class BDDReporter {
         log.debug("BDD HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
         // reporting initialized
-        ExtentSparkReporter htmlReporter = new ExtentSparkReporter(reportingFolder + "/cucumber-result.html");
+        ExtentSparkReporter htmlReporter = new ExtentSparkReporter(reportingFolder + "/"+ ReportingConst.bddReportName);
         this.extentReport = new ExtentReports();
         if (new File("src/test/resources/extent-config.xml").exists()) {
             try {

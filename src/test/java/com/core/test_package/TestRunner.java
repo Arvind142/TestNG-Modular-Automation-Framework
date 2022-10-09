@@ -55,8 +55,8 @@ public class TestRunner extends TestNG_Base {
 		reporter.log(testMethod, INFO, "test Executed");
 	}
 
-	@Test(dataProvider = "default")
-	@TestDescription(author = "Choudhary, Arvind", category = "valid Working case with Object... as arguments")
+	@Test(dataProvider = "default",groups = "valid Working case with Object... as arguments")
+	@TestDescription(author = "Choudhary, Arvind")
 	public void testArgs(Object... arg2) {
 		testMethod = getTestCaseName(arg2);
 		reporter.log(testMethod, INFO, "test Executed");
