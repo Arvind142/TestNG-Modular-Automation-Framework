@@ -2,10 +2,14 @@ package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
+import com.core.framework.constant.FrameworkConst;
+import com.core.framework.constant.ReportingConst;
 import com.core.framework.htmlreporter.BDDReporter;
 import com.core.framework.htmlreporter.Reporter;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
+import org.testng.annotations.Test;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
@@ -29,15 +33,15 @@ public class Listener implements ITestListener {
             return;
         System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
-        String author=null, category=null;
+        String author=null, category[]=null;
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
-        	author=author.equals("NotApplicable")?null:author;
+        	author=author.equals(FrameworkConst.not_applicable_const)?null:author;
         	
         	category = result.getMethod().getConstructorOrMethod().getMethod()
-    				.getAnnotation(TestDescription.class).category();
-        	category=category.equals("NotApplicable")?null:category;
+    				.getAnnotation(Test.class).groups();
+        	category=category.length==0?null:category;
         }
         catch(Exception e) {
         	log.warn("@TestDescription is not used with "+testName);
@@ -112,7 +116,7 @@ public class Listener implements ITestListener {
         log.debug("log initialized!");
 
         // read config to start with base
-        property = readProperty("src/test/resources/Execution-settings.properties");
+        property = readProperty(FrameworkConst.application_global_config);
 
         if (property != null) {
             log.debug("execution property read");
@@ -120,7 +124,7 @@ public class Listener implements ITestListener {
             log.error("failed to read property file");
         }
         // updating reporting folder
-        reportingFolder = "test-output";
+        reportingFolder = ReportingConst.resultFolder;
 
         //reporting initialized
         reporter = Reporter.initializeReporting(reportingFolder);
@@ -181,7 +185,7 @@ public class Listener implements ITestListener {
         try{
             String isBDD = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(TestDescription.class).isBDD();
-            return !(isBDD.equalsIgnoreCase("NotApplicable"));
+            return !(isBDD.equalsIgnoreCase(FrameworkConst.not_applicable_const));
         }
         catch(Exception e){
             return false;

@@ -4,6 +4,8 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.core.framework.constant.FrameworkConst;
+import com.core.framework.constant.ReportingConst;
 import com.core.framework.testLogs.StepLogger;
 import com.intuit.karate.Results;
 import com.intuit.karate.core.Feature;
@@ -36,6 +38,7 @@ public class Reporter {
 
     private String reportingFolder;
 
+    private String screenshotFolder;
     private String assetFolder;
 
     private String summaryFolder;
@@ -45,26 +48,26 @@ public class Reporter {
     private Reporter(String reportingFolder) {
         log.debug("HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
-        // creating asset folder
-        assetFolder = reportingFolder + "/assets";
+        // creating screenshot folder
+        assetFolder = reportingFolder + "/"+ ReportingConst.screenshotFolder;
         File folder = new File(assetFolder);
-        log.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
+        log.debug((folder.mkdirs() ? "screenshot folder created" : "screenshot folder creation failed"));
         log.debug("Asset folder created @ " + folder.getAbsolutePath());
 
         // creating summary folder
-        summaryFolder = reportingFolder + "/summary";
+        summaryFolder = reportingFolder + "/"+ReportingConst.summaryFolder;
         folder = new File(summaryFolder);
         log.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
         log.debug("Summary folder created @ " + folder.getAbsolutePath());
 
         // reporting initialized
-        htmlReporter = new ExtentSparkReporter(reportingFolder + "/result.html");
+        htmlReporter = new ExtentSparkReporter(reportingFolder + "/"+ReportingConst.htmlReportName);
         this.reportingFolder = reportingFolder;
         extentReport = new ExtentReports();
         htmlTestLogs = new HashMap<>();
-        if (new File("src/test/resources/extent-config.xml").exists()) {
+        if (new File(FrameworkConst.extent_config_xml).exists()) {
             try {
-                htmlReporter.loadXMLConfig("src/test/resources/extent-config.xml");
+                htmlReporter.loadXMLConfig(FrameworkConst.extent_config_xml);
             } catch (Exception e) {
                 //do Nothing go with default config
             }
@@ -93,7 +96,7 @@ public class Reporter {
         }
         log.debug("html reporting initialized for " + methodName);
     }
-    public synchronized void onTestStart(String methodName,String author,String category) {
+    public synchronized void onTestStart(String methodName,String author,String... category) {
         ExtentTest test = extentReport.createTest(methodName);
         extentReport.attachReporter(htmlReporter);
         htmlTestLogs.put(methodName, test);
@@ -179,7 +182,7 @@ public class Reporter {
             e.printStackTrace();
             return "";
         }
-        return "assets/" + fileName + ".jpg";
+        return ReportingConst.screenshotFolder + fileName + ".jpg";
     }
 
 
@@ -241,25 +244,10 @@ public class Reporter {
         return reportingFolder;
     }
 
-    public void setReportingFolder(String reportingFolder) {
-        this.reportingFolder = reportingFolder;
-    }
-
-    public String getAssetFolder() {
-        return assetFolder;
-    }
-
-    public void setAssetFolder(String assetFolder) {
-        this.assetFolder = assetFolder;
-    }
-
     public String getSummaryFolder() {
         return summaryFolder;
     }
 
-    public void setSummaryFolder(String summaryFolder) {
-        this.summaryFolder = summaryFolder;
-    }
 
     ExtentReports getExtentReport(){
         return this.extentReport;
@@ -272,7 +260,13 @@ public class Reporter {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
-            String resultFolder = reportingFolderPath + "/" + String.valueOf(folder.listFiles().length + 1);
+            String resultFolder = "";
+            if(ReportingConst.haveMulipleReportFolder){
+                resultFolder = reportingFolderPath + String.valueOf(folder.listFiles().length + 1);
+            }
+            else{
+                resultFolder = reportingFolderPath;
+            }
             folder = new File(resultFolder);
             // folder check - if not present create one
             if (!folder.exists()) {

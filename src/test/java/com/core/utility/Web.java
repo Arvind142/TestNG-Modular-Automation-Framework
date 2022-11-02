@@ -1,5 +1,6 @@
 package com.core.utility;
 
+import com.core.framework.constant.ReportingConst;
 import com.core.framework.listener.Listener;
 import com.google.common.base.Function;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -306,7 +307,7 @@ public class Web {
      * @return image path
      */
     public String takeSceenShotWebPage(RemoteWebDriver driver, String fileName) {
-        String folderName = Listener.reporter.getReportingFolder() + "/Screenshot/";
+        String folderName = Listener.reporter.getReportingFolder() + "/"+ ReportingConst.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -319,7 +320,7 @@ public class Web {
             e.printStackTrace();
             return "";
         }
-        return "Screenshot/" + fileName + ".jpg";
+        return ReportingConst.screenshotFolder + fileName + ".jpg";
     }
 
     /***
@@ -329,7 +330,7 @@ public class Web {
      * @return return path for screenshot
      */
     public String takeSceenShotWebPage(WebDriver driver, String fileName) {
-        String folderName = Listener.reporter.getReportingFolder() + "/Screenshot/";
+        String folderName = Listener.reporter.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -342,7 +343,7 @@ public class Web {
             e.printStackTrace();
             return "";
         }
-        return "Screenshot/" + fileName + ".jpg";
+        return ReportingConst.screenshotFolder + fileName + ".jpg";
     }
 
     /**
@@ -353,7 +354,7 @@ public class Web {
      */
 
     public String takeScreenShotScreenSnip(String fileName) {
-        String folderName = Listener.reporter.getReportingFolder() + "/Screenshot/";
+        String folderName = Listener.reporter.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -363,7 +364,7 @@ public class Web {
             BufferedImage img = new Robot()
                     .createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
             ImageIO.write(img, "png", new File(imgPath));
-            return "Screenshot/" + fileName + ".png";
+            return ReportingConst.screenshotFolder + fileName + ".png";
         } catch (Exception e) {
             e.printStackTrace();
             return "";

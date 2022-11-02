@@ -14,8 +14,8 @@ import org.testng.annotations.Test;
 @Listeners(Listener.class)
 public class BDDRunner extends TestNG_Base {
 
-    @Test
-    @TestDescription(author = "Arvind Choudhary", category = "feature based execution", isBDD = "yes")
+    @Test(groups = {"feature based execution"})
+    @TestDescription(author = "Arvind Choudhary", isBDD = "yes")
     @Parameters({"features","tags"})
     public void test(@Optional("All") String feature,@Optional("All") String tags){
         System.out.println(feature+" : "+tags);
