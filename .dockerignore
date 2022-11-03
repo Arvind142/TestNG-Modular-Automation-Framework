@@ -1,4 +1,7 @@
 target/
 .idea/
 logs/
+test-output/
 README.md
+.gitignore
+.git/

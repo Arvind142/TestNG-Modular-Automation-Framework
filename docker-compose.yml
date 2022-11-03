@@ -16,7 +16,6 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
   edge:
     image: selenium/node-edge:latest
     shm_size: 2gb
@@ -26,7 +25,6 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
   firefox:
     image: selenium/node-firefox:latest
     shm_size: 2gb
@@ -36,15 +34,13 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
   #-------------------SELENIUM GRID services ended-----------------------
+
+  #-------------------Framework image------------------------------------
   # service name(container name)
   modular-automation-framework:
     # which container to use for building
-    image: maven:3.8.5-openjdk-11-slim
+    image: arvindc142/framework:v1
     # to copy project into container
     volumes:
-      - './:/project'
-    shm_size: 2gb
-    working_dir: '/project'
-    command: mvn clean compile test
+      - './test-results/:/app/test-output/'
