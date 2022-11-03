@@ -1,13 +1,12 @@
+# Base image
 FROM maven:3.8.5-openjdk-11-slim
-
-LABEL maintainer=arvindchoudhary142@yahoo.in
-
-LABEL image-name=TestNG-Modular-Automation-Framework
-
+# Argument with default value
+ARG suiteFile=testng.xml
+# Copy code from local to image
 COPY ./ /app
-
+# Specify working directory
 WORKDIR /app
-
+# Execute command at creation of image
 RUN mvn clean compile
-
-CMD mvn test
+# Command to be executed at start of container
+CMD mvn test -Dsurefire.suiteXmlFiles=$suiteFile -e
