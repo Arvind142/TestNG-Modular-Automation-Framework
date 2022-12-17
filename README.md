@@ -6,7 +6,6 @@ ___
 
 -->
 ![GitHub repo size](https://img.shields.io/github/repo-size/arvind142/Modular-Automation-Testing)
-![Lines of code](https://img.shields.io/tokei/lines/github/arvind142/Modular-Automation-Testing)
 
 ___
 
