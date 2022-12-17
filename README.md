@@ -26,7 +26,7 @@ ___
 |:--|:--|
 | HTML Report	|  _Extent Reporting_ |
 | Logging		|	 _Log-back logger_ |
-|Automatic Driver version management | _WDM(WebDriverManagement)_ |
+|Automatic Driver version management | _WDM(WebDriverManager)_ |
 |Containerization | _Docker_|
 
 ___
