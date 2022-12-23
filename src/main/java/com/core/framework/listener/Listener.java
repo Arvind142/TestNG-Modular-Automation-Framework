@@ -4,12 +4,10 @@ import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.constant.FrameworkConst;
 import com.core.framework.constant.ReportingConst;
-import com.core.framework.htmlreporter.BDDReporter;
-import com.core.framework.htmlreporter.Reporter;
+import com.core.framework.htmlreporter.TestReportManager;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
 import org.testng.annotations.Test;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
@@ -20,20 +18,13 @@ public class Listener implements ITestListener {
     public static Properties property;
     // reporting variables
     public String reportingFolder;
-    // html reporter
-    public static Reporter reporter;
-
-    // html reporter
-    public static BDDReporter bddReporter;
 
     @Override
     public void onTestStart(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
         System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
-        String author=null, category[]=null;
+        String author=null;
+        String[] category =null;
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
@@ -48,65 +39,39 @@ public class Listener implements ITestListener {
         }
         if(author!=null && category!=null) {
         	author=author.replaceAll(" ", "&nbsp;");
-        	reporter.onTestStart(testName, author, category);
+        	TestReportManager.onTestStart(testName, author, category);
         }
         else if(author!=null) {
         	author=author.replaceAll(" ", "&nbsp;");
-        	reporter.onTestStart(testName, author);
+            TestReportManager.onTestStart(testName, author);
         }
         else {
-        	reporter.onTestStart(testName);
+            TestReportManager.onTestStart(testName);
         }
-        reporter.log(testName, Status.INFO, "test execution started!");
-    }
-
-    public void onTestCompletion(String testName) {
-        reporter.log(testName, Status.INFO, "test execution completed!");
-        System.out.println("================================================================================================================================================");
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
-//        reporter.log(testName, Status.PASS, "testcase passed / No Exception recorded!");
-        onTestCompletion(testName);
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
-        reporter.log(testName, Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
-        onTestCompletion(testName);
+        TestReportManager.log(Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
         if(result.getSkipCausedBy().size()==0) {
-        	reporter.log(testName, Status.SKIP, "testcase skipped! ");
+            TestReportManager.log(Status.SKIP, "testcase skipped! ");
         }
         else {
-        	reporter.log(testName, Status.SKIP, "testcase skipped! [ cause: "+result.getSkipCausedBy().get(0).getMethodName()+" ]");
+            TestReportManager.log(Status.SKIP, "testcase skipped! [ cause: "+result.getSkipCausedBy().get(0).getMethodName()+" ]");
         }
-        onTestCompletion(testName);
     }
 
     @Override
     public void onTestFailedWithTimeout(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
-        reporter.log(testName, Status.FAIL, "testcase failed with timeout!");
+        TestReportManager.log(Status.FAIL, "testcase failed with timeout!");
         this.onTestFailure(result);
     }
 
@@ -127,20 +92,16 @@ public class Listener implements ITestListener {
         reportingFolder = ReportingConst.resultFolder;
 
         //reporting initialized
-        reporter = Reporter.initializeReporting(reportingFolder);
+        TestReportManager.initializeReporting(reportingFolder);
 
         // loading properties data into report
-        reporter.setSystemVars(property);
-
-        bddReporter = BDDReporter.initializeReporting();
+        TestReportManager.setSystemVars(property);
     }
 
     @Override
     public void onFinish(ITestContext context) {
         // flush reporting
-        reporter.stopReporting();
-        // write summary
-        reporter.writeSummaryFiles();
+        TestReportManager.stopReporting();
 
         log.debug("onFinish reached!");
     }
@@ -179,16 +140,5 @@ public class Listener implements ITestListener {
         }
 
         return properties;
-    }
-
-    public boolean isItKarateBasedRunner(ITestResult result){
-        try{
-            String isBDD = result.getMethod().getConstructorOrMethod().getMethod()
-                    .getAnnotation(TestDescription.class).isBDD();
-            return !(isBDD.equalsIgnoreCase(FrameworkConst.not_applicable_const));
-        }
-        catch(Exception e){
-            return false;
-        }
     }
 }

@@ -112,14 +112,5 @@
             <version>1.2.11</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Karate based api testing -->
-        <!-- https://mvnrepository.com/artifact/com.intuit.karate/karate-junit4 -->
-        <dependency>
-            <groupId>com.intuit.karate</groupId>
-            <artifactId>karate-junit4</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-
     </dependencies>
 </project>

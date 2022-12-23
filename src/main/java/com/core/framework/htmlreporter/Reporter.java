@@ -1,32 +1,19 @@
 package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.core.framework.constant.FrameworkConst;
 import com.core.framework.constant.ReportingConst;
-import com.core.framework.testLogs.StepLogger;
-import com.intuit.karate.Results;
-import com.intuit.karate.core.Feature;
-import com.intuit.karate.core.ScenarioResult;
-import com.intuit.karate.core.StepResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 @Slf4j
-public class Reporter {
+class Reporter {
 	
 	private static Reporter reporter=null;
 
@@ -34,17 +21,12 @@ public class Reporter {
 
     private final ExtentReports extentReport;
 
-    private final Map<String, ExtentTest> htmlTestLogs;
+    private final String reportingFolder;
 
-    private String reportingFolder;
+    private final String assetFolder;
 
-    private String screenshotFolder;
-    private String assetFolder;
-
-    private String summaryFolder;
-    
     private String deviceDetails;
-    
+
     private Reporter(String reportingFolder) {
         log.debug("HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
@@ -54,17 +36,10 @@ public class Reporter {
         log.debug((folder.mkdirs() ? "screenshot folder created" : "screenshot folder creation failed"));
         log.debug("Asset folder created @ " + folder.getAbsolutePath());
 
-        // creating summary folder
-        summaryFolder = reportingFolder + "/"+ReportingConst.summaryFolder;
-        folder = new File(summaryFolder);
-        log.debug((folder.mkdirs() ? "asset folder created" : "asset folder creation failed"));
-        log.debug("Summary folder created @ " + folder.getAbsolutePath());
-
         // reporting initialized
         htmlReporter = new ExtentSparkReporter(reportingFolder + "/"+ReportingConst.htmlReportName);
         this.reportingFolder = reportingFolder;
         extentReport = new ExtentReports();
-        htmlTestLogs = new HashMap<>();
         if (new File(FrameworkConst.extent_config_xml).exists()) {
             try {
                 htmlReporter.loadXMLConfig(FrameworkConst.extent_config_xml);
@@ -72,100 +47,9 @@ public class Reporter {
                 //do Nothing go with default config
             }
         }
+        // attach reporter :)
+        extentReport.attachReporter(htmlReporter);
         log.debug("html reporting initialized");
-    }
-
-    public synchronized void onTestStart(String methodName) {
-        ExtentTest test = extentReport.createTest(methodName);
-        extentReport.attachReporter(htmlReporter);
-        htmlTestLogs.put(methodName, test);
-        test.assignAuthor(System.getProperty("user.name"));
-        if(deviceDetails !=null) {
-        	test.assignDevice(deviceDetails);
-        }
-        log.debug("html reporting initialized for " + methodName);
-    }
-
-    public synchronized void onTestStart(String methodName,String author) {
-        ExtentTest test = extentReport.createTest(methodName);
-        extentReport.attachReporter(htmlReporter);
-        htmlTestLogs.put(methodName, test);
-        test.assignAuthor(author);
-        if(deviceDetails !=null) {
-        	test.assignDevice(deviceDetails);
-        }
-        log.debug("html reporting initialized for " + methodName);
-    }
-    public synchronized void onTestStart(String methodName,String author,String... category) {
-        ExtentTest test = extentReport.createTest(methodName);
-        extentReport.attachReporter(htmlReporter);
-        htmlTestLogs.put(methodName, test);
-        test.assignAuthor(author);
-        test.assignCategory(category);
-        if(deviceDetails !=null) {
-        	test.assignDevice(deviceDetails);
-        }
-        log.debug("html reporting initialized for " + methodName);
-    }
-
-    public synchronized void assignAuthor(String methodName,String author) {
-    	htmlTestLogs.get(methodName).assignAuthor(author);
-    }
-
-    public synchronized void assignDevice(String methodName,String device) {
-    	htmlTestLogs.get(methodName).assignDevice(device);
-    }
-
-    public synchronized void log(String methodName, Status status, String log) {
-        if (!htmlTestLogs.containsKey(methodName)) {
-            onTestStart(methodName);
-        }
-        ExtentTest extentTest = htmlTestLogs.get(methodName);
-        extentTest.log(status, log);
-        loggerLog(status, log);
-    }
-
-    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual, String evidence) {
-        if (!htmlTestLogs.containsKey(methodName)) {
-            onTestStart(methodName);
-        }
-        ExtentTest extentTest = htmlTestLogs.get(methodName);
-        StepLogger log = StepLogger.log(stepDescription, expected, actual, evidence);
-        extentTest.log(log.getLogStatus(), log.toString());
-        loggerLog(log.getLogStatus(), log.toString());
-    }
-
-    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual) {
-        if (!htmlTestLogs.containsKey(methodName)) {
-            onTestStart(methodName);
-        }
-        ExtentTest extentTest = htmlTestLogs.get(methodName);
-        StepLogger log = StepLogger.log(stepDescription, expected, actual);
-        extentTest.log(log.getLogStatus(), log.toString());
-        loggerLog(log.getLogStatus(), log.toString());
-    }
-
-    public synchronized <T> void log(String methodName, String stepDescription, T expected, T actual, WebDriver driver) {
-        if (!htmlTestLogs.containsKey(methodName)) {
-            onTestStart(methodName);
-        }
-        ExtentTest extentTest = htmlTestLogs.get(methodName);
-        StepLogger log = StepLogger.log(stepDescription, expected, actual, takeScreenShotWebPage(driver, stepDescription));
-        extentTest.log(log.getLogStatus(), log.toString());
-        loggerLog(log.getLogStatus(), log.toString());
-    }
-
-    private void loggerLog(Status status, String message) {
-        switch (status) {
-            case FAIL:
-                log.error("[ testlog Status : " + status + ", testlog : " + message + "]");
-                break;
-            case WARNING:
-                log.warn("[ testlog Status : " + status + ", testlog : " + message + "]");
-                break;
-            default:
-                log.info("[ testlog Status : " + status + ", testlog : " + message + "]");
-        }
     }
 
     public String takeScreenShotWebPage(WebDriver driver, String fileName) {
@@ -185,43 +69,14 @@ public class Reporter {
         return ReportingConst.screenshotFolder + fileName + ".jpg";
     }
 
+    public String getDeviceDetails() {
+        return deviceDetails;
+    }
 
-    public boolean stopReporting() {
+    public void stopReporting() {
         extentReport.flush();
         log.debug("report flush");
         log.info("Report url: "+htmlReporter.getFile().getAbsolutePath());
-        return true;
-    }
-
-    public boolean writeSummaryFiles() {
-        try (
-                FileOutputStream pass = new FileOutputStream(getSummaryFolder()+"/pass.txt");
-                FileOutputStream fail = new FileOutputStream(getSummaryFolder()+"/fail.txt");
-                FileOutputStream skip = new FileOutputStream(getSummaryFolder()+"/skip.txt");
-        ){
-            for(String tests : htmlTestLogs.keySet()){
-                if(htmlTestLogs.get(tests).getStatus().equals(Status.PASS)){
-                    pass.write(tests.getBytes(StandardCharsets.UTF_8));
-                    pass.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
-                }
-                else if(htmlTestLogs.get(tests).getStatus().equals(Status.FAIL)){
-                    fail.write(tests.getBytes(StandardCharsets.UTF_8));
-                    fail.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
-                }
-                else{
-                    skip.write(tests.getBytes(StandardCharsets.UTF_8));
-                    skip.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public ExtentSparkReporter getHtmlReporter() {
-        return htmlReporter;
     }
 
     public void setSystemVars(Properties props) {
@@ -244,11 +99,6 @@ public class Reporter {
         return reportingFolder;
     }
 
-    public String getSummaryFolder() {
-        return summaryFolder;
-    }
-
-
     ExtentReports getExtentReport(){
         return this.extentReport;
     }
@@ -260,9 +110,14 @@ public class Reporter {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
-            String resultFolder = "";
+            String resultFolder;
             if(ReportingConst.haveMulipleReportFolder){
-                resultFolder = reportingFolderPath + String.valueOf(folder.listFiles().length + 1);
+                if(folder.listFiles()!=null) {
+                    resultFolder = reportingFolderPath + folder.listFiles().length + 1;
+                }
+                else{
+                    resultFolder = reportingFolderPath + 1;
+                }
             }
             else{
                 resultFolder = reportingFolderPath;

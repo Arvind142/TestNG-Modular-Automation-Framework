@@ -1,6 +1,7 @@
 package com.core.utility;
 
 import com.core.framework.constant.ReportingConst;
+import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.listener.Listener;
 import com.google.common.base.Function;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -37,7 +38,7 @@ public class Web {
      */
     public synchronized WebDriver initializeWebDriver() {
         Properties globalProperty = Listener.property;
-        WebDriver driver = null;
+        WebDriver driver;
         String browserName = globalProperty.getProperty("browser");
         try {
             if (globalProperty.getProperty("isRemote").toLowerCase().startsWith("n")) {
@@ -85,9 +86,6 @@ public class Web {
                         throw new InvalidArgumentException("Invalid BrowserName");
                 }
             }
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -98,14 +96,13 @@ public class Web {
 
     /***
      *
-     * @param <T>         any class Object i.e. CHROMEOPTIONS/EDGEOPTIONS
      * @param browserName CHROME/EDGE
      * @param options     browserOptions which holds reference for object type of
      *                    ChromeOptions/EdgeOptions
      * @return web driver reference initialized
      */
-    public <T> WebDriver initializeLocalChromiumWebBrowsers(String browserName, ChromiumOptions<?> options) {
-        WebDriver driver = null;
+    public WebDriver initializeLocalChromiumWebBrowsers(String browserName, ChromiumOptions<?> options) {
+        WebDriver driver;
         try {
             switch (browserName.toUpperCase()) {
                 case "CHROME":
@@ -124,8 +121,7 @@ public class Web {
             }
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
-            driver = null;
-            return driver;
+            return null;
         }
         return driver;
     }
@@ -143,22 +139,6 @@ public class Web {
     }
 
     /**
-     * confirms if page is loaded or not with fluent wait and java script executor
-     *
-     * @param driver
-     */
-    public void waitForPageLoad(RemoteWebDriver driver) {
-        FluentWait<RemoteWebDriver> wait = new FluentWait<RemoteWebDriver>(driver).withTimeout(Duration.ofSeconds(20))
-                .pollingEvery(Duration.ofSeconds(1)).ignoring(Exception.class);
-        wait.until(new Function<WebDriver, Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                return ((JavascriptExecutor) input).executeScript("return document.readyState").equals("complete");
-            }
-        });
-    }
-
-    /**
      * to close all browser instances
      *
      * @param driver web driver object
@@ -168,15 +148,6 @@ public class Web {
             driver.quit();
     }
 
-    /**
-     * to close all browser instances
-     *
-     * @param driver remoteWebDriver object is taken as param
-     */
-    public void destroyWebDriver(RemoteWebDriver driver) {
-        if (driver != null)
-            driver.quit();
-    }
 
     /***
      * method return by method with adequate locator and location value
@@ -201,10 +172,8 @@ public class Web {
             case Constants.WebLocator.CSS_SELECTOR:
                 return By.cssSelector(locator.split("~")[1]);
             default:
-                new InvalidArgumentException("Invalid locator used, kindly use ID,NAME, XPATH, CSS,TAGNAME");
-                break;
+                throw new InvalidArgumentException("Invalid locator used, kindly use ID,NAME, XPATH, CSS,TAGNAME");
         }
-        return null;
     }
 
     /***
@@ -218,16 +187,11 @@ public class Web {
      * @return WebElement/null
      */
     public WebElement getWebElement(WebDriver driver, String locator, Boolean throwException, Integer timeOUT) {
-        WebElement element = null;
+        WebElement element;
         try {
-            Wait<WebDriver> wait = new FluentWait<WebDriver>(driver).withTimeout(Duration.ofSeconds(timeOUT))
+            Wait<WebDriver> wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(timeOUT))
                     .pollingEvery(Duration.ofSeconds(1));
-            element = wait.until(new Function<WebDriver, WebElement>() {
-                @Override
-                public WebElement apply(WebDriver input) {
-                    return driver.findElement(by(locator));
-                }
-            });
+            element = wait.until((Function<WebDriver, WebElement>) input -> driver.findElement(by(locator)));
             highlightWebElement(driver, element);
             return element;
         } catch (Exception e) {
@@ -251,16 +215,11 @@ public class Web {
      */
 
     public WebElement getWebElement(WebDriver driver, By locator, Boolean throwException, Integer timeOUT) {
-        WebElement element = null;
+        WebElement element;
         try {
-            Wait<WebDriver> wait = new FluentWait<WebDriver>(driver).withTimeout(Duration.ofSeconds(timeOUT))
+            Wait<WebDriver> wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(timeOUT))
                     .pollingEvery(Duration.ofSeconds(1));
-            element = wait.until(new Function<WebDriver, WebElement>() {
-                @Override
-                public WebElement apply(WebDriver input) {
-                    return driver.findElement(locator);
-                }
-            });
+            element = wait.until((Function<WebDriver, WebElement>) input -> driver.findElement(locator));
             highlightWebElement(driver, element);
             return element;
         } catch (Exception e) {
@@ -284,7 +243,7 @@ public class Web {
      * @return boolean status of true - worked and false some issue.
      */
     public boolean sendKeys(WebDriver driver, String locator, String text, Boolean throwException, Integer timeOUT) {
-        WebElement element = null;
+        WebElement element;
         try {
             element = getWebElement(driver, locator, throwException, timeOUT);
             element.clear();
@@ -299,30 +258,6 @@ public class Web {
         }
     }
 
-    /**
-     * take screenshot of webpage
-     *
-     * @param driver   webdriver
-     * @param fileName screenshotName
-     * @return image path
-     */
-    public String takeSceenShotWebPage(RemoteWebDriver driver, String fileName) {
-        String folderName = Listener.reporter.getReportingFolder() + "/"+ ReportingConst.screenshotFolder;
-        File f = (new File(folderName));
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        String imgPath = folderName + fileName + ".jpg";
-        File s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        try {
-            FileUtils.copyFile(s, new File(imgPath));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-        return ReportingConst.screenshotFolder + fileName + ".jpg";
-    }
-
     /***
      *  take webpage snapshot
      * @param driver webdriver instance
@@ -330,7 +265,7 @@ public class Web {
      * @return return path for screenshot
      */
     public String takeSceenShotWebPage(WebDriver driver, String fileName) {
-        String folderName = Listener.reporter.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
+        String folderName = TestReportManager.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -354,7 +289,7 @@ public class Web {
      */
 
     public String takeScreenShotScreenSnip(String fileName) {
-        String folderName = Listener.reporter.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
+        String folderName = TestReportManager.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();

@@ -39,7 +39,7 @@
     <logger name="org.asynchttpclient.netty" level="OFF" />
     <logger name="io.github.bonigarcia.wdm" level="WARN" />
 
-    <root level="DEBUG">
+    <root level="TRACE">
         <appender-ref ref="console-appender" />
         <appender-ref ref="file-appender" />
         <appender-ref ref="html-appender" />
