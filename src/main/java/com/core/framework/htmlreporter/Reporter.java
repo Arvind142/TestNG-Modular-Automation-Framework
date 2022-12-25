@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.File;
 import java.util.Properties;
 
@@ -52,21 +53,32 @@ class Reporter {
         log.debug("html reporting initialized");
     }
 
+    private String getUniqueString(){
+        return String.valueOf(Math.random()*100);
+    }
+
     public String takeScreenShotWebPage(WebDriver driver, String fileName) {
         String folderName = assetFolder + "/";
         File f = (new File(folderName));
         if (!f.exists()) {
             log.debug((f.mkdirs() ? "Screenshot folder created" : "Screenshot folder creation failed"));
         }
-        String imgPath = folderName + fileName + ".jpg";
-        File s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        fileName = fileName+"_"+getUniqueString()+".jpg";
+        String imgPath = folderName + fileName;
+        File s;
+        if(driver instanceof FirefoxDriver){
+            s = ((FirefoxDriver) driver).getFullPageScreenshotAs(OutputType.FILE);
+        }
+        else{
+            s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        }
         try {
             FileUtils.copyFile(s, new File(imgPath));
         } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
-        return ReportingConst.screenshotFolder + fileName + ".jpg";
+        return ReportingConst.screenshotFolder + fileName;
     }
 
     public String getDeviceDetails() {
@@ -113,10 +125,10 @@ class Reporter {
             String resultFolder;
             if(ReportingConst.haveMulipleReportFolder){
                 if(folder.listFiles()!=null) {
-                    resultFolder = reportingFolderPath + folder.listFiles().length + 1;
+                    resultFolder = reportingFolderPath + (folder.listFiles().length + 1);
                 }
                 else{
-                    resultFolder = reportingFolderPath + 1;
+                    resultFolder = reportingFolderPath + (1);
                 }
             }
             else{

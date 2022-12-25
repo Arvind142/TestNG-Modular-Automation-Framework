@@ -2,7 +2,7 @@ package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
-import com.core.framework.testLogs.StepLogger;
+import com.core.framework.testLogs.TableLog;
 import org.openqa.selenium.WebDriver;
 
 import java.util.Properties;
@@ -51,19 +51,18 @@ public class TestReportManager {
     }
 
     public static <T> void log(String stepDescription, T expected, T actual, String evidence) {
-
-        StepLogger log = StepLogger.log(stepDescription, expected, actual, evidence);
-        extentTestThreadLocal.get().log(log.getLogStatus(), log.toString());
+        TableLog log = TableLog.log(stepDescription, expected, actual, evidence);
+        extentTestThreadLocal.get().log(log.getLogStatus(), log.getEquivalent());
     }
 
     public static <T> void log(String stepDescription, T expected, T actual) {
-        StepLogger log = StepLogger.log(stepDescription, expected, actual);
-        extentTestThreadLocal.get().log(log.getLogStatus(), log.toString());
+        TableLog log = TableLog.log(stepDescription, expected, actual);
+        extentTestThreadLocal.get().log(log.getLogStatus(), log.getEquivalent());
     }
 
     public static <T> void log(String stepDescription, T expected, T actual, WebDriver driver) {
-        StepLogger log = StepLogger.log(stepDescription, expected, actual, reporter.takeScreenShotWebPage(driver, stepDescription));
-        extentTestThreadLocal.get().log(log.getLogStatus(), log.toString());
+        TableLog log = TableLog.log(stepDescription, expected, actual, takeScreenShotWebPage(driver,stepDescription));
+        extentTestThreadLocal.get().log(log.getLogStatus(), log.getEquivalent());
     }
 
     public static void stopReporting(){
