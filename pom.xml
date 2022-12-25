@@ -53,27 +53,21 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-devtools-v104</artifactId>
-            <version>4.4.0</version>
+            <version>4.7.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.codoid.products/fillo -->
         <dependency>
             <groupId>com.codoid.products</groupId>
             <artifactId>fillo</artifactId>
-            <version>1.21</version>
+            <version>1.22</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
@@ -86,7 +80,7 @@
         <dependency>
   <groupId>commons-net</groupId>
   <artifactId>commons-net</artifactId>
-  <version>[3.9.0,)</version>
+  <version>3.9.0</version>
 </dependency>
 
         <!-- Reporting -->
@@ -102,14 +96,14 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.0.0</version>
+            <version>5.2.2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.4.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
