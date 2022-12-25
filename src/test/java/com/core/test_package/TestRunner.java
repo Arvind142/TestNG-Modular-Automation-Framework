@@ -38,11 +38,11 @@ public class TestRunner extends TestNG_Base {
 		TestReportManager.log(PASS, "FirstLOG");
 		Web web = new Web();
 		WebDriver driver = web.initializeWebDriver();
-		driver.get("https://google.com");
+		driver.get("https://youtube.com");
 		TestReportManager.log(INFO, driver.getCurrentUrl());
-		TestReportManager.log("Title verification", "Google", driver.getTitle());
-		TestReportManager.log("Title verification", "Google", driver.getTitle(), TestReportManager.takeScreenShotWebPage(driver, "someName"));
-		TestReportManager.log("Title verification Mismatch", "Google_Expected", driver.getTitle(), driver);
+		TestReportManager.log("Title verification", "Youtube", driver.getTitle());
+		TestReportManager.log("Title verification", "Youtube", driver.getTitle(), TestReportManager.takeScreenShotWebPage(driver, "someName"));
+		TestReportManager.log("Title verification Mismatch", "Youtube_Expected", driver.getTitle(), driver);
 		driver.quit();
 	}
 
