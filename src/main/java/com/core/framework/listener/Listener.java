@@ -2,8 +2,8 @@ package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
-import com.core.framework.constant.FrameworkConst;
-import com.core.framework.constant.ReportingConst;
+import com.core.framework.constant.FrameworkConstants;
+import com.core.framework.constant.ReportingConstants;
 import com.core.framework.htmlreporter.TestReportManager;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
@@ -21,14 +21,18 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
         String author=null;
+        String testDescription = null;
         String[] category =null;
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
-        	author=author.equals(FrameworkConst.not_applicable_const)?null:author;
+        	author=author.equals(FrameworkConstants.not_applicable_const)?null:author;
+
+            testDescription = result.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(TestDescription.class).testDescription();
+            testDescription=testDescription.equals(FrameworkConstants.not_applicable_const)?null:testDescription;
         	
         	category = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(Test.class).groups();
@@ -38,15 +42,13 @@ public class Listener implements ITestListener {
         	log.warn("@TestDescription is not used with "+testName);
         }
         if(author!=null && category!=null) {
-        	author=author.replaceAll(" ", "&nbsp;");
-        	TestReportManager.onTestStart(testName, author, category);
+        	TestReportManager.onTestStart(testName,testDescription, author, category);
         }
         else if(author!=null) {
-        	author=author.replaceAll(" ", "&nbsp;");
-            TestReportManager.onTestStart(testName, author);
+            TestReportManager.onTestStart(testName,testDescription, author);
         }
         else {
-            TestReportManager.onTestStart(testName);
+            TestReportManager.onTestStart(testName,testDescription);
         }
     }
 
@@ -81,7 +83,7 @@ public class Listener implements ITestListener {
         log.debug("log initialized!");
 
         // read config to start with base
-        property = readProperty(FrameworkConst.application_global_config);
+        property = readProperty(FrameworkConstants.application_global_config);
 
         if (property != null) {
             log.debug("execution property read");
@@ -89,7 +91,7 @@ public class Listener implements ITestListener {
             log.error("failed to read property file");
         }
         // updating reporting folder
-        reportingFolder = ReportingConst.resultFolder;
+        reportingFolder = ReportingConstants.resultFolder;
 
         //reporting initialized
         TestReportManager.initializeReporting(reportingFolder);

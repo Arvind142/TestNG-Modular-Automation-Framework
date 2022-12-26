@@ -4,7 +4,6 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.core.framework.testLogs.TableLog;
 import org.openqa.selenium.WebDriver;
-
 import java.util.Properties;
 
 public class TestReportManager {
@@ -15,28 +14,22 @@ public class TestReportManager {
     public static void initializeReporting(String outputFolder){
         reporter = Reporter.initializeReporting(outputFolder);
     }
-    public static void onTestStart(String methodName) {
-        extentTestThreadLocal.set(reporter.getExtentReport().createTest(methodName));
-        assignAuthor(System.getProperty("user.name"));
-        if (reporter.getDeviceDetails() != null) {
-            assignDevice(reporter.getDeviceDetails());
+
+    public static void onTestStart(String testName,String description) {
+        if(description!=null){
+            description=description.replaceAll(" ", "&nbsp;");
         }
+        onTestStart(testName,description,null);
     }
 
-    public static void onTestStart(String methodName,String author) {
-        extentTestThreadLocal.set(reporter.getExtentReport().createTest(methodName));
-        assignAuthor(author);
-        if (reporter.getDeviceDetails() != null) {
-            assignDevice(reporter.getDeviceDetails());
-        }
+    public static void onTestStart(String testName,String description,String author) {
+        onTestStart(testName,description,author, (String[]) null);
     }
-    public static void onTestStart(String methodName,String author,String... category) {
-        extentTestThreadLocal.set(reporter.getExtentReport().createTest(methodName));
+    public static void onTestStart(String testName,String description,String author,String... category) {
+        extentTestThreadLocal.set(reporter.getExtentReport().createTest(testName,description));
         assignAuthor(author);
-        extentTestThreadLocal.get().assignCategory(category);
-        if (reporter.getDeviceDetails() != null) {
-            assignDevice(reporter.getDeviceDetails());
-        }
+        assignCategory(category);
+        assignDevice();
     }
 
     public static void setSystemVars(Properties pros){
@@ -70,11 +63,20 @@ public class TestReportManager {
     }
 
     public static void assignAuthor(String author){
-        extentTestThreadLocal.get().assignAuthor(author);
+        if(author!=null){
+            author=author.replaceAll(" ", "&nbsp;");
+        }
+        extentTestThreadLocal.get().assignAuthor(author==null?(System.getProperty("user.name")):author);
     }
 
-    public static void assignDevice(String device){
-        extentTestThreadLocal.get().assignDevice(device);
+    public static void assignDevice(){
+        if (reporter.getDeviceDetails() != null) {
+            extentTestThreadLocal.get().assignDevice(reporter.getDeviceDetails());
+        }
+    }
+
+    public static void assignCategory(String... category){
+        extentTestThreadLocal.get().assignCategory(category);
     }
 
     public static String takeScreenShotWebPage(WebDriver driver, String fileName) {

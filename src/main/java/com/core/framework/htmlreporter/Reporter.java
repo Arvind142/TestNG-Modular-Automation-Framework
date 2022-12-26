@@ -2,8 +2,8 @@ package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.constant.FrameworkConst;
-import com.core.framework.constant.ReportingConst;
+import com.core.framework.constant.FrameworkConstants;
+import com.core.framework.constant.ReportingConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
@@ -32,18 +32,18 @@ class Reporter {
         log.debug("HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
         // creating screenshot folder
-        assetFolder = reportingFolder + "/"+ ReportingConst.screenshotFolder;
+        assetFolder = reportingFolder + "/"+ ReportingConstants.screenshotFolder;
         File folder = new File(assetFolder);
         log.debug((folder.mkdirs() ? "screenshot folder created" : "screenshot folder creation failed"));
         log.debug("Asset folder created @ " + folder.getAbsolutePath());
 
         // reporting initialized
-        htmlReporter = new ExtentSparkReporter(reportingFolder + "/"+ReportingConst.htmlReportName);
+        htmlReporter = new ExtentSparkReporter(reportingFolder + "/"+ ReportingConstants.htmlReportName);
         this.reportingFolder = reportingFolder;
         extentReport = new ExtentReports();
-        if (new File(FrameworkConst.extent_config_xml).exists()) {
+        if (new File(FrameworkConstants.extent_config_xml).exists()) {
             try {
-                htmlReporter.loadXMLConfig(FrameworkConst.extent_config_xml);
+                htmlReporter.loadXMLConfig(FrameworkConstants.extent_config_xml);
             } catch (Exception e) {
                 //do Nothing go with default config
             }
@@ -78,7 +78,7 @@ class Reporter {
             e.printStackTrace();
             return "";
         }
-        return ReportingConst.screenshotFolder + fileName;
+        return ReportingConstants.screenshotFolder + fileName;
     }
 
     public String getDeviceDetails() {
@@ -123,7 +123,7 @@ class Reporter {
                 folder.mkdirs();
             }
             String resultFolder;
-            if(ReportingConst.haveMulipleReportFolder){
+            if(ReportingConstants.haveMulipleReportFolder){
                 if(folder.listFiles()!=null) {
                     resultFolder = reportingFolderPath + (folder.listFiles().length + 1);
                 }
