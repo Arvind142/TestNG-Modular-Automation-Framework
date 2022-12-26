@@ -1,6 +1,6 @@
 package com.core.utility;
 
-import com.core.framework.constant.ReportingConst;
+import com.core.framework.constant.ReportingConstants;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.listener.Listener;
 import com.google.common.base.Function;
@@ -155,22 +155,22 @@ public class Web {
      * @param locator constant identifier and locator
      * @return By class method
      */
-    public By by(String locator) {
-        switch (locator.split("~")[0]) {
-            case Constants.WebLocator.ID:
-                return By.id(locator.split("~")[1]);
-            case Constants.WebLocator.NAME:
-                return By.name(locator.split("~")[1]);
-            case Constants.WebLocator.XPATH:
-                return By.xpath(locator.split("~")[1]);
-            case Constants.WebLocator.TAGNAME:
-                return By.tagName(locator.split("~")[1]);
-            case Constants.WebLocator.LINKTEXT:
-                return By.linkText(locator.split("~")[1]);
-            case Constants.WebLocator.CLASS_NAME:
-                return By.className(locator.split("~")[1]);
-            case Constants.WebLocator.CSS_SELECTOR:
-                return By.cssSelector(locator.split("~")[1]);
+    public By by(WebLocator locator,String value) {
+        switch (locator) {
+            case ID:
+                return By.id(value);
+            case NAME:
+                return By.name(value);
+            case XPATH:
+                return By.xpath(value);
+            case TAGNAME:
+                return By.tagName(value);
+            case LINKTEXT:
+                return By.linkText(value);
+            case CLASS_NAME:
+                return By.className(value);
+            case CSS_SELECTOR:
+                return By.cssSelector(value);
             default:
                 throw new InvalidArgumentException("Invalid locator used, kindly use ID,NAME, XPATH, CSS,TAGNAME");
         }
@@ -180,18 +180,18 @@ public class Web {
      * to get webElement present on UI
      *
      * @param driver         WebDriver reference
-     * @param locator        element locator
+     * @param locatorFilter        element locatorFilter
      * @param throwException boolean var to return exception when exception found or
      *                       skip exception
      * @param timeOUT        time to wait for element
      * @return WebElement/null
      */
-    public WebElement getWebElement(WebDriver driver, String locator, Boolean throwException, Integer timeOUT) {
+    public WebElement getWebElement(WebDriver driver, WebLocator locatorFilter, String locationIdentifier, Boolean throwException, Integer timeOUT) {
         WebElement element;
         try {
             Wait<WebDriver> wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(timeOUT))
                     .pollingEvery(Duration.ofSeconds(1));
-            element = wait.until((Function<WebDriver, WebElement>) input -> driver.findElement(by(locator)));
+            element = wait.until((Function<WebDriver, WebElement>) input -> driver.findElement(by(locatorFilter,locationIdentifier)));
             highlightWebElement(driver, element);
             return element;
         } catch (Exception e) {
@@ -235,17 +235,17 @@ public class Web {
      * method to send values to fields
      *
      * @param driver         webdriver reference
-     * @param locator        element identifier
+     * @param locatorValue        element identifier
      * @param text           text to send
      * @param throwException rue if you want exception in case of some exception or
      *                       false to return null in case of exception
      * @param timeOUT        time to wait for element to be visible
      * @return boolean status of true - worked and false some issue.
      */
-    public boolean sendKeys(WebDriver driver, String locator, String text, Boolean throwException, Integer timeOUT) {
+    public boolean sendKeys(WebDriver driver, WebLocator webLocator,String locatorValue, String text, Boolean throwException, Integer timeOUT) {
         WebElement element;
         try {
-            element = getWebElement(driver, locator, throwException, timeOUT);
+            element = getWebElement(driver,webLocator, locatorValue, throwException, timeOUT);
             element.clear();
             element.sendKeys(text);
             return true;
@@ -265,7 +265,7 @@ public class Web {
      * @return return path for screenshot
      */
     public String takeSceenShotWebPage(WebDriver driver, String fileName) {
-        String folderName = TestReportManager.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
+        String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -278,7 +278,7 @@ public class Web {
             e.printStackTrace();
             return "";
         }
-        return ReportingConst.screenshotFolder + fileName + ".jpg";
+        return ReportingConstants.screenshotFolder + fileName + ".jpg";
     }
 
     /**
@@ -289,7 +289,7 @@ public class Web {
      */
 
     public String takeScreenShotScreenSnip(String fileName) {
-        String folderName = TestReportManager.getReportingFolder() + "/"+ReportingConst.screenshotFolder;
+        String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -299,7 +299,7 @@ public class Web {
             BufferedImage img = new Robot()
                     .createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
             ImageIO.write(img, "png", new File(imgPath));
-            return ReportingConst.screenshotFolder + fileName + ".png";
+            return ReportingConstants.screenshotFolder + fileName + ".png";
         } catch (Exception e) {
             e.printStackTrace();
             return "";
