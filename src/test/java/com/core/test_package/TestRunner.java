@@ -1,7 +1,6 @@
 package com.core.test_package;
 
 import com.core.framework.htmlreporter.TestReportManager;
-import com.core.framework.listener.Listener;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
 import com.core.utility.Web;
@@ -9,13 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import static com.aventstack.extentreports.Status.*;
 import static org.testng.Assert.*;
 
 @Slf4j
-@Listeners(Listener.class)
 public class TestRunner extends TestNG_Base {
 	@DataProvider(name = "default")
 	public Object[][] dataProvider() {
@@ -49,22 +46,22 @@ public class TestRunner extends TestNG_Base {
 	@Test(dataProvider = "default")
 	@TestDescription(author = "Choudhary, Arvind")
 	public void test2Args(Object arg1) {
-		System.out.println(arg1);
-		TestReportManager.log(INFO, "test Executed");
+//		System.out.println(arg1);
+		TestReportManager.log(INFO, "test Executed: "+arg1);
 	}
 
 	@Test(dataProvider = "default",groups = "valid Working case with Object... as arguments")
 	@TestDescription(author = "Choudhary, Arvind")
 	public void testArgs(Object... arg2) {
-		System.out.println(arg2[0]);
-		TestReportManager.log(INFO, "test Executed");
+//		System.out.println(arg2[0]);
+		TestReportManager.log(INFO, "test Executed: "+arg2[0]);
 	}
 
 	@Test(timeOut = 1)
 	@TestDescription(author = "Choudhary, Arvind")
 	public void testFailWithTimeout() {
 		for (int i = 1; i <= 2000000; i++) {
-            System.out.println(i);
+//            System.out.println(i);
 		}
 	}
 

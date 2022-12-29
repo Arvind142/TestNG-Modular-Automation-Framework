@@ -10,6 +10,7 @@ import org.testng.*;
 import org.testng.annotations.Test;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 @Slf4j
@@ -33,10 +34,11 @@ public class Listener implements ITestListener {
             testDescription = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(TestDescription.class).testDescription();
             testDescription=testDescription.equals(FrameworkConstants.not_applicable_const)?null:testDescription;
-        	
-        	category = result.getMethod().getConstructorOrMethod().getMethod()
-    				.getAnnotation(Test.class).groups();
+
+            category = result.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(Test.class).groups();
         	category=category.length==0?null:category;
+
         }
         catch(Exception e) {
         	log.warn("@TestDescription is not used with "+testName);
@@ -50,6 +52,7 @@ public class Listener implements ITestListener {
         else {
             TestReportManager.onTestStart(testName,testDescription);
         }
+        TestReportManager.checkAndAddParametersToReport(result);
     }
 
     @Override
@@ -59,10 +62,16 @@ public class Listener implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
         TestReportManager.log(Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
+        TestReportManager.checkAndAddRetryReport(result);
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
+        // testcase is being retried
+        if(result.wasRetried()){
+            onTestFailure(result);
+            return;
+        }
         if(result.getSkipCausedBy().size()==0) {
             TestReportManager.log(Status.SKIP, "testcase skipped! ");
         }
@@ -112,23 +121,39 @@ public class Listener implements ITestListener {
     public static String getTestCaseName(ITestResult result) {
         String[] resultDataArray = result.getMethod().getQualifiedName().split("\\.");
         String testName = resultDataArray[resultDataArray.length - 2] + "." + resultDataArray[resultDataArray.length - 1];
+
+        // get parameters if any :)
+        String[] paramString = getParameter(result);
+        if(paramString!=null){
+            // returning test name
+            return (testName + ".[" + paramString[0] + "]");
+        }
+        return testName;
+    }
+
+    public static String[] getParameter(ITestResult result){
         // if no parameter then return test name
         if (result.getParameters().length == 0)
-            return testName;
+            return null;
 
-        //get first parameter out of result as we have parameter passed to our test method
-        Object paramObject = result.getParameters()[0];
+        // get all parameters
+        Object[] parametersObjectArray = Arrays.stream(result.getParameters()).toArray();
 
-        // if given data is Object array
-        if (paramObject instanceof Object[]) {
-            paramObject = ((Object[]) paramObject)[0];
+        // verify if first parameter is a limit less array, if so refactor
+        if(parametersObjectArray.length==1){
+            if(parametersObjectArray[0] instanceof Object[]){
+                parametersObjectArray = (Object[])parametersObjectArray[0];
+            }
         }
 
-        // converting object to String
-        String paramString = String.valueOf(paramObject);
+        // convert objectArray to stringArray
+//        String[] stringArray = Arrays.copyOf(parametersObjectArray, parametersObjectArray.length, String[].class);
+        String[] stringArray = new String[parametersObjectArray.length];
+        for(int i =0;i<parametersObjectArray.length;i++)
+            stringArray[i]=String.valueOf(parametersObjectArray[i]);
 
-        // returning test name
-        return (testName + ".[" + paramString + "]");
+        // return string array
+        return stringArray;
     }
 
 
