@@ -10,7 +10,9 @@ import org.testng.*;
 import org.testng.annotations.Test;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 @Slf4j
@@ -57,12 +59,14 @@ public class Listener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
+        TestReportManager.attachSnapshot();
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
         TestReportManager.log(Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
         TestReportManager.checkAndAddRetryReport(result);
+        TestReportManager.attachSnapshot();
     }
 
     @Override
@@ -78,6 +82,7 @@ public class Listener implements ITestListener {
         else {
             TestReportManager.log(Status.SKIP, "testcase skipped! [ cause: "+result.getSkipCausedBy().get(0).getMethodName()+" ]");
         }
+        TestReportManager.attachSnapshot();
     }
 
     @Override
@@ -123,37 +128,37 @@ public class Listener implements ITestListener {
         String testName = resultDataArray[resultDataArray.length - 2] + "." + resultDataArray[resultDataArray.length - 1];
 
         // get parameters if any :)
-        String[] paramString = getParameter(result);
+        List<String> paramString = getParameter(result);
         if(paramString!=null){
             // returning test name
-            return (testName + ".[" + paramString[0] + "]");
+            return (testName + " - [ " + paramString.stream().toArray()[0]+" ]");
         }
         return testName;
     }
 
-    public static String[] getParameter(ITestResult result){
+    public static List<String> getParameter(ITestResult result){
         // if no parameter then return test name
         if (result.getParameters().length == 0)
             return null;
 
         // get all parameters
-        Object[] parametersObjectArray = Arrays.stream(result.getParameters()).toArray();
+        List<Object> objectList = Arrays.stream(result.getParameters()).toList();
 
-        // verify if first parameter is a limit less array, if so refactor
-        if(parametersObjectArray.length==1){
-            if(parametersObjectArray[0] instanceof Object[]){
-                parametersObjectArray = (Object[])parametersObjectArray[0];
+        // new parameter list to fetch all params ( including variable length parameters)
+        List<String> newObjectList = new ArrayList<>();
+
+        // iterate over list
+        for (Object currentObject : objectList) {
+            // if parameter is of variable length args
+            if (currentObject instanceof Object[]) {
+                for (Object obj : ((Object[]) currentObject)) {
+                    newObjectList.add(String.valueOf(obj));
+                }
+            } else {
+                newObjectList.add(String.valueOf(currentObject));
             }
         }
-
-        // convert objectArray to stringArray
-//        String[] stringArray = Arrays.copyOf(parametersObjectArray, parametersObjectArray.length, String[].class);
-        String[] stringArray = new String[parametersObjectArray.length];
-        for(int i =0;i<parametersObjectArray.length;i++)
-            stringArray[i]=String.valueOf(parametersObjectArray[i]);
-
-        // return string array
-        return stringArray;
+        return  newObjectList;
     }
 
 

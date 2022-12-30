@@ -2,136 +2,22 @@ package com.core.utility;
 
 import com.core.framework.constant.ReportingConstants;
 import com.core.framework.htmlreporter.TestReportManager;
-import com.core.framework.listener.Listener;
 import com.google.common.base.Function;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.chromium.ChromiumOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 import java.time.Duration;
-import java.util.Properties;
 
 @Slf4j
-public class Web {
-    /***
-     * to initialize webdriver based on sent browserName
-     *
-     * @return webdriver variable
-     */
-    public synchronized WebDriver initializeWebDriver() {
-        Properties globalProperty = Listener.property;
-        WebDriver driver;
-        String browserName = globalProperty.getProperty("browser");
-        try {
-            if (globalProperty.getProperty("isRemote").toLowerCase().startsWith("n")) {
-                //WDM use confirmation
-                switch (browserName.toUpperCase()) {
-                    case "CHROME":
-                        WebDriverManager.chromedriver().setup();
-                        driver = new ChromeDriver();
-                        break;
-                    case "EDGE":
-                    case "MSEDGE":
-                        WebDriverManager.edgedriver().setup();
-                        driver = new EdgeDriver();
-                        break;
-                    case "FIREFOX":
-                    case "FOX":
-                    case "FF":
-                        WebDriverManager.firefoxdriver().setup();
-                        driver = new FirefoxDriver();
-                        break;
-                    case "IE":
-                    case "INTERNETEXPLORER":
-                        WebDriverManager.iedriver().setup();
-                        driver = new InternetExplorerDriver();
-                        break;
-                    default:
-                        throw new InvalidArgumentException("Invalid BrowserName");
-                }
-            } else {
-                URL url = new URL(globalProperty.getProperty("remoteUrl"));
-                switch (browserName.toUpperCase()) {
-                    case "CHROME":
-                        driver = new RemoteWebDriver(url, new ChromeOptions());
-                        break;
-                    case "EDGE":
-                    case "MSEDGE":
-                        driver = new RemoteWebDriver(url, new EdgeOptions());
-                        break;
-                    case "FIREFOX":
-                    case "FOX":
-                    case "FF":
-                        driver = new RemoteWebDriver(url, new FirefoxOptions());
-                        break;
-                    default:
-                        throw new InvalidArgumentException("Invalid BrowserName");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+class Web {
 
-        return driver;
-    }
-
-    /***
-     *
-     * @param browserName CHROME/EDGE
-     * @param options     browserOptions which holds reference for object type of
-     *                    ChromeOptions/EdgeOptions
-     * @return web driver reference initialized
-     */
-    public WebDriver initializeLocalChromiumWebBrowsers(String browserName, ChromiumOptions<?> options) {
-        WebDriver driver;
-        try {
-            switch (browserName.toUpperCase()) {
-                case "CHROME":
-                    WebDriverManager.chromedriver().setup();
-                    ChromeOptions cOptions = (ChromeOptions) options;
-                    driver = new ChromeDriver(cOptions);
-                    break;
-                case "EDGE":
-                case "MSEDGE":
-                    WebDriverManager.edgedriver().setup();
-                    EdgeOptions eOptions = (EdgeOptions) options;
-                    driver = new EdgeDriver(eOptions);
-                    break;
-                default:
-                    throw new InvalidArgumentException("Invalid BrowserName");
-            }
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return driver;
-    }
-
-    /***
-     * to open any url
-     *
-     * @param driver web driver variable
-     * @param url    url to open
-     */
     public void openURL(WebDriver driver, String url) {
         driver.get(url);
         driver.manage().window().maximize();
@@ -155,7 +41,7 @@ public class Web {
      * @param locator constant identifier and locator
      * @return By class method
      */
-    public By by(WebLocator locator,String value) {
+    public By by(WebLocator locator, String value) {
         switch (locator) {
             case ID:
                 return By.id(value);
@@ -264,7 +150,7 @@ public class Web {
      * @param fileName filename
      * @return return path for screenshot
      */
-    public String takeSceenShotWebPage(WebDriver driver, String fileName) {
+    public String takeScreenShotWebPage(WebDriver driver, String fileName) {
         String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.screenshotFolder;
         File f = (new File(folderName));
         if (!f.exists()) {

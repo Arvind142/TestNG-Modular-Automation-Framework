@@ -1,7 +1,9 @@
 package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.model.Test;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.core.framework.Manager.DriverManager;
 import com.core.framework.constant.FrameworkConstants;
 import com.core.framework.constant.ReportingConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 @Slf4j
@@ -32,13 +37,13 @@ class Reporter {
         log.debug("HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
         // creating screenshot folder
-        assetFolder = reportingFolder + "/"+ ReportingConstants.screenshotFolder;
+        assetFolder = reportingFolder + ReportingConstants.screenshotFolder;
         File folder = new File(assetFolder);
         log.debug((folder.mkdirs() ? "screenshot folder created" : "screenshot folder creation failed"));
         log.debug("Asset folder created @ " + folder.getAbsolutePath());
 
         // reporting initialized
-        htmlReporter = new ExtentSparkReporter(reportingFolder + "/"+ ReportingConstants.htmlReportName);
+        htmlReporter = new ExtentSparkReporter(reportingFolder + ReportingConstants.htmlReportName);
         this.reportingFolder = reportingFolder;
         extentReport = new ExtentReports();
         if (new File(FrameworkConstants.extent_config_xml).exists()) {
@@ -57,7 +62,7 @@ class Reporter {
         return String.valueOf(Math.random()*100);
     }
 
-    public String takeScreenShotWebPage(WebDriver driver, String fileName) {
+    public String takeScreenShotWebPage(String fileName) {
         String folderName = assetFolder + "/";
         File f = (new File(folderName));
         if (!f.exists()) {
@@ -66,6 +71,7 @@ class Reporter {
         fileName = fileName+"_"+getUniqueString()+".jpg";
         String imgPath = folderName + fileName;
         File s;
+        WebDriver driver = DriverManager.getWebDriver();
         if(driver instanceof FirefoxDriver){
             s = ((FirefoxDriver) driver).getFullPageScreenshotAs(OutputType.FILE);
         }
@@ -88,7 +94,22 @@ class Reporter {
     public void stopReporting() {
         extentReport.flush();
         log.debug("report flush");
-        log.info("Report url: "+htmlReporter.getFile().getAbsolutePath());
+        System.out.println("Report url: file:///"+htmlReporter.getFile().getAbsolutePath().replace("\\","/"));
+        writeSummary();
+    }
+
+    public void writeSummary(){
+        try(
+                FileOutputStream file = new FileOutputStream(reportingFolder+ReportingConstants.summaryFileName)
+                ){
+            file.write("[Status] \t[TestCase Name]".getBytes());
+            for(Test tests: extentReport.getReport().getTestList()){
+                file.write(("\r\n"+tests.getStatus()+"\t\t"+ tests.getName()).getBytes());
+            }
+        }
+        catch (Exception e){
+            log.error("Summary creation failed due to: "+e.getMessage());
+        }
     }
 
     public void setSystemVars(Properties props) {
@@ -134,6 +155,7 @@ class Reporter {
             else{
                 resultFolder = reportingFolderPath;
             }
+            resultFolder = resultFolder+"/";
             folder = new File(resultFolder);
             // folder check - if not present create one
             if (!folder.exists()) {

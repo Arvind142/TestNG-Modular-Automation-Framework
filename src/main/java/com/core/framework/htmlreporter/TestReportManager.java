@@ -4,11 +4,12 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.core.framework.Manager.DriverManager;
 import com.core.framework.listener.Listener;
 import com.core.framework.testLogs.TableLog;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,8 +57,8 @@ public class TestReportManager {
     public static void checkAndAddParametersToReport(ITestResult result){
         if(result.getParameters().length!=0){
             extentTestThreadLocal.get().log(Status.INFO,MarkupHelper.createTable(new String[][]{
-                    {"Parameters as follow"},
-                    Listener.getParameter(result),
+                    {"Initialized with below params"},
+                    {Arrays.toString(Listener.getParameter(result).stream().toArray())},
             }));
         }
     }
@@ -85,13 +86,7 @@ public class TestReportManager {
     }
 
     public static <T> void log(String stepDescription, T expected, T actual) {
-        TableLog testLog = TableLog.log(stepDescription, expected, actual);
-        log.trace(testLog.toString());
-        extentTestThreadLocal.get().log(testLog.getLogStatus(), testLog.getEquivalent());
-    }
-
-    public static <T> void log(String stepDescription, T expected, T actual, WebDriver driver) {
-        TableLog testLog = TableLog.log(stepDescription, expected, actual, takeScreenShotWebPage(driver,stepDescription));
+        TableLog testLog = TableLog.log(stepDescription, expected, actual, takeScreenShotWebPage(stepDescription));
         extentTestThreadLocal.get().log(testLog.getLogStatus(), testLog.getEquivalent());
     }
 
@@ -116,7 +111,13 @@ public class TestReportManager {
         extentTestThreadLocal.get().assignCategory(category);
     }
 
-    public static String takeScreenShotWebPage(WebDriver driver, String fileName) {
-        return reporter.takeScreenShotWebPage(driver,fileName);
+    public static String takeScreenShotWebPage(String fileName) {
+        return reporter.takeScreenShotWebPage(fileName);
+    }
+    public static void attachSnapshot() {
+        if(DriverManager.isConnectionOpen()){
+            extentTestThreadLocal.get().addScreenCaptureFromPath(takeScreenShotWebPage("ClosureSnapshot"),"ClosureSnapshot");
+            DriverManager.closeConnection();
+        }
     }
 }

@@ -1,9 +1,9 @@
 package com.core.test_package;
 
+import com.core.framework.Manager.DriverManager;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
-import com.core.utility.Web;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.testng.SkipException;
@@ -33,14 +33,12 @@ public class TestRunner extends TestNG_Base {
 	public void testNoArgs() {
 		TestReportManager.log(INFO, "test Executed");
 		TestReportManager.log(PASS, "FirstLOG");
-		Web web = new Web();
-		WebDriver driver = web.initializeWebDriver();
+		WebDriver driver = DriverManager.getWebDriver();
 		driver.get("https://youtube.com");
 		TestReportManager.log(INFO, driver.getCurrentUrl());
-		TestReportManager.log("Title verification", "Youtube", driver.getTitle());
-		TestReportManager.log("Title verification", "Youtube", driver.getTitle(), TestReportManager.takeScreenShotWebPage(driver, "someName"));
-		TestReportManager.log("Title verification Mismatch", "Youtube_Expected", driver.getTitle(), driver);
-		driver.quit();
+		TestReportManager.log("Title verification", "YouTube", driver.getTitle());
+		TestReportManager.log("Title verification", "YouTube", driver.getTitle());
+		TestReportManager.log("Title verification Mismatch", "Youtube_Expected", driver.getTitle());
 	}
 
 	@Test(dataProvider = "default")
