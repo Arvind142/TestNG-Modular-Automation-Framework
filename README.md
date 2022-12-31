@@ -8,6 +8,7 @@ ___
 ![GitHub repo size](https://img.shields.io/github/repo-size/arvind142/Modular-Automation-Testing)
 ![Lines of code](https://img.shields.io/tokei/lines/github/arvind142/Modular-Automation-Testing)
 [![wakatime](https://wakatime.com/badge/github/Arvind142/TestNG-Modular-Automation-Framework.svg)](https://wakatime.com/badge/github/Arvind142/TestNG-Modular-Automation-Framework)
+
 ___
 
 **Framework** to cater basic needs of automation tester, where tester can mainly focus on scripting!!!
@@ -26,7 +27,7 @@ ___
 |:--|:--|
 | HTML Report	|  _Extent Reporting_ |
 | Logging		|	 _Log-back logger_ |
-|Automatic Driver version management | _WDM(WebDriverManagement)_ |
+|Automatic Driver version management | _WDM(WebDriverManager)_ |
 |Containerization | _Docker_|
 
 ___
