@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
@@ -60,7 +61,7 @@ class Reporter {
 
     private String getUniqueString(){
         SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssSSS");
-        return format.format(Calendar.getInstance().getTime())+"_"+(Math.random()*1000);
+        return format.format(Calendar.getInstance().getTime())+"_"+(new SecureRandom()).nextDouble();
     }
 
     public String takeScreenShotWebPage(String fileName) {
