@@ -43,7 +43,7 @@ public class TestReportManager {
         synchronized (TestReportManager.class){
             if(listOfTCs.containsKey(testName)){
                 listOfTCs.replace(testName,listOfTCs.get(testName)+1);
-                testName = testName+" [ Invocation: "+listOfTCs.get(testName)+"]";
+                testName = testName+" ( Invocation: "+listOfTCs.get(testName)+")";
             }
             else{
                 listOfTCs.put(testName,1);

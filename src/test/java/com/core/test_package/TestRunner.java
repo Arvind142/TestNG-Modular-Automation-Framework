@@ -1,13 +1,11 @@
 package com.core.test_package;
 
-import com.core.framework.webdriver.Browser;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.edge.EdgeOptions;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -61,8 +59,13 @@ public class TestRunner extends TestNG_Base {
 	@Test(timeOut = 1)
 	@TestDescription(author = "Choudhary, Arvind")
 	public void testFailWithTimeout() {
-		for (int i = 1; i <= 2000000; i++) {
-//            System.out.println(i);
+		int a = 0;
+		int b = 1;
+		int c = 0;
+		for (int i = 1; i <= 2000000000; i++){
+			c = a + b;
+			a = b;
+			b = c;
 		}
 	}
 
