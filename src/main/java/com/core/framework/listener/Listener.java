@@ -10,17 +10,12 @@ import org.testng.*;
 import org.testng.annotations.Test;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Slf4j
 public class Listener implements ITestListener {
     //base Property
-    public static Properties property;
-    // reporting variables
-    public String reportingFolder;
+    public static final Properties property = new Properties();
 
     @Override
     public void onTestStart(ITestResult result) {
@@ -31,11 +26,11 @@ public class Listener implements ITestListener {
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
-        	author=author.equals(FrameworkConstants.not_applicable_const)?null:author;
+        	author=author.equals(FrameworkConstants.NOT_APPLICABLE_CONST)?null:author;
 
             testDescription = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(TestDescription.class).testDescription();
-            testDescription=testDescription.equals(FrameworkConstants.not_applicable_const)?null:testDescription;
+            testDescription=testDescription.equals(FrameworkConstants.NOT_APPLICABLE_CONST)?null:testDescription;
 
             category = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(Test.class).groups();
@@ -76,7 +71,7 @@ public class Listener implements ITestListener {
             onTestFailure(result);
             return;
         }
-        if(result.getSkipCausedBy().size()==0) {
+        if(result.getSkipCausedBy().isEmpty()) {
             TestReportManager.log(Status.SKIP, "testcase skipped! ");
         }
         else {
@@ -97,21 +92,22 @@ public class Listener implements ITestListener {
         log.debug("log initialized!");
 
         // read config to start with base
-        property = readProperty(FrameworkConstants.application_global_config);
+        readProperty(FrameworkConstants.APPLICATION_GLOBAL_CONFIG);
 
-        if (property != null) {
+        if (!property.isEmpty()) {
             log.debug("execution property read");
         } else {
             log.error("failed to read property file");
         }
-        // updating reporting folder
-        reportingFolder = ReportingConstants.resultFolder;
 
         //reporting initialized
-        TestReportManager.initializeReporting(reportingFolder);
-
+        TestReportManager.initializeReporting(ReportingConstants.RESULT_FOLDER);
+        // set trigger information
+        TestReportManager.setTriggerDetails(context);
         // loading properties data into report
         TestReportManager.setSystemVars(property);
+
+
     }
 
     @Override
@@ -119,6 +115,9 @@ public class Listener implements ITestListener {
         log.debug("onFinish reached!");
         // flush reporting
         TestReportManager.stopReporting();
+        if(!property.isEmpty()){
+            property.clear();
+        }
     }
 
     // _______________ Helper Methods _______________
@@ -128,7 +127,7 @@ public class Listener implements ITestListener {
 
         // get parameters if any :)
         List<String> paramString = getParameter(result);
-        if(paramString!=null){
+        if(!paramString.isEmpty()){
             // returning test name
             return (testName + " - [ " + paramString.stream().toArray()[0]+" ]");
         }
@@ -138,10 +137,10 @@ public class Listener implements ITestListener {
     public static List<String> getParameter(ITestResult result){
         // if no parameter then return test name
         if (result.getParameters().length == 0)
-            return null;
+            return new ArrayList<>();
 
         // get all parameters
-        List<Object> objectList = Arrays.stream(result.getParameters()).toList();
+        List<Object> objectList = Arrays.asList(Arrays.stream(result.getParameters()).toArray());
 
         // new parameter list to fetch all params ( including variable length parameters)
         List<String> newObjectList = new ArrayList<>();
@@ -149,8 +148,8 @@ public class Listener implements ITestListener {
         // iterate over list
         for (Object currentObject : objectList) {
             // if parameter is of variable length args
-            if (currentObject instanceof Object[]) {
-                for (Object obj : ((Object[]) currentObject)) {
+            if (currentObject instanceof Object[] objArray) {
+                for (Object obj : objArray) {
                     newObjectList.add(String.valueOf(obj));
                 }
             } else {
@@ -161,30 +160,26 @@ public class Listener implements ITestListener {
     }
 
 
-    public Properties readProperty(String propertyFilePath) {
-        Properties properties = new Properties();
+    public void readProperty(String propertyFilePath) {
         try (InputStream ins = new FileInputStream(propertyFilePath)) {
-            properties.load(ins);
+            Listener.property.load(ins);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
 
         // replace property values with env vars :)
-        for(Object iterator:properties.keySet()){
+        for(Object iterator:Listener.property.keySet()){
             if(System.getenv().containsKey(iterator)){
                 log.trace("Env value found against key: {}",iterator);
                 String systemEnvValue = System.getenv(iterator.toString());
-                if(systemEnvValue.equalsIgnoreCase(properties.getProperty(iterator.toString()))){
+                if(systemEnvValue.equalsIgnoreCase(Listener.property.getProperty(iterator.toString()))){
                     log.trace("key has env value same as property value");
                 }
                 else{
-                    log.trace("key has env value as {} and property value as {}",systemEnvValue,properties.getProperty(iterator.toString()));
-                    properties.replace(iterator,System.getenv(iterator.toString()));
+                    log.trace("key has env value as {} and property value as {}",systemEnvValue,Listener.property.getProperty(iterator.toString()));
+                    Listener.property.replace(iterator,System.getenv(iterator.toString()));
                 }
             }
         }
-
-        return properties;
     }
 }

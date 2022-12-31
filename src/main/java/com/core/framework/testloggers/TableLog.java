@@ -1,4 +1,4 @@
-package com.core.framework.testLogs;
+package com.core.framework.testloggers;
 
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.Markup;
@@ -49,8 +49,8 @@ public class TableLog implements StepLogger {
         this.expectedValue = expectedValue;
         this.actualValue = actualValue;
         this.logStatus = logStatus;
-        if (attachment == null || attachment.trim()=="") {
-            this.attachment = attachment;
+        if (attachment == null || attachment.trim().equalsIgnoreCase("")) {
+            this.attachment = null;
         } else {
             this.attachment = "<a href=\"" + attachment + "\" target=\"_blank\"> Click Here!</a>";
         }
@@ -118,8 +118,8 @@ public class TableLog implements StepLogger {
      * @return Test class object
      */
     public static synchronized <T> TableLog log(String stepDescription, T expectedValue, T actualValue) {
-        String exp = "";
-        String act = "";
+        String exp;
+        String act;
 
         try {
             // to work with null elements
@@ -127,8 +127,13 @@ public class TableLog implements StepLogger {
                 if (expectedValue == null) {
                     exp = "";
                 }
+                else{
+                    exp = String.valueOf(expectedValue);
+                }
                 if (actualValue == null) {
                     act = "";
+                }else{
+                    act = String.valueOf(actualValue);
                 }
                 // if any of both of them or both are null
                 return new TableLog(stepDescription, exp, act,
@@ -140,9 +145,7 @@ public class TableLog implements StepLogger {
                     || (expectedValue instanceof String[] && actualValue instanceof String[])) {
 
                 // String comparison
-                if (expectedValue instanceof String[] && actualValue instanceof String[]) {
-                    String[] exps = (String[]) expectedValue;
-                    String[] acts = (String[]) actualValue;
+                if (expectedValue instanceof String[] exps && actualValue instanceof String[] acts) {
                     exp = TableLog.getPrintableStringOfArray(exps);
                     act = TableLog.getPrintableStringOfArray(acts);
                 } else {
@@ -185,9 +188,7 @@ public class TableLog implements StepLogger {
                     || (expectedValue instanceof Float[] && actualValue instanceof Float[])) {
 
                 // Float comparison
-                if (expectedValue instanceof Float[] && actualValue instanceof Float[]) {
-                    Float[] exps = (Float[]) expectedValue;
-                    Float[] acts = (Float[]) actualValue;
+                if (expectedValue instanceof Float[] exps && actualValue instanceof Float[] acts) {
                     exp = TableLog.getPrintableStringOfArray(exps);
                     act = TableLog.getPrintableStringOfArray(acts);
                 } else {

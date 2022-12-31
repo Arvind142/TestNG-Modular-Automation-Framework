@@ -6,8 +6,9 @@ import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.listener.Listener;
-import com.core.framework.testLogs.TableLog;
+import com.core.framework.testloggers.TableLog;
 import lombok.extern.slf4j.Slf4j;
+import org.testng.ITestContext;
 import org.testng.ITestResult;
 import java.util.Arrays;
 import java.util.Objects;
@@ -18,6 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class TestReportManager {
+
+    private TestReportManager(){
+        // private constructor
+    }
     private static final ThreadLocal<ExtentTest> extentTestThreadLocal = new ThreadLocal<>();
 
     private static Reporter reporter;
@@ -31,7 +36,7 @@ public class TestReportManager {
 
     public static void onTestStart(String testName,String description) {
         if(description!=null){
-            description=description.replaceAll(" ", "&nbsp;");
+            description=description.replace(" ", "&nbsp;");
         }
         onTestStart(testName,description,null);
     }
@@ -70,8 +75,23 @@ public class TestReportManager {
         }
     }
 
-    public static void setSystemVars(Properties pros){
+    public static synchronized void setSystemVars(Properties pros){
         reporter.setSystemVars(pros);
+    }
+
+    public static synchronized void setTriggerDetails(ITestContext context){
+        // get triggered by
+        String triggerName = context.getCurrentXmlTest().getSuite().getFileName();
+        if(triggerName.endsWith("temp-testng-customsuite.xml")){
+            String[] params = context.getCurrentXmlTest().getClasses().get(0).getName().split("[.]");
+            triggerName = params[params.length-1]+".java";
+        }
+        else{
+            String[] params = triggerName.split("\\\\");
+            triggerName = params[params.length-1];
+        }
+        reporter.setSystemVar("Triggered by user",System.getProperty("user.name"));
+        reporter.setSystemVar("Triggered using [ .xml/.java ]",triggerName);
     }
 
     public static String getReportingFolder(){
@@ -92,12 +112,13 @@ public class TestReportManager {
     }
 
     public static void stopReporting(){
+        extentTestThreadLocal.remove();
         reporter.stopReporting();
     }
 
     public static void assignAuthor(String author){
         if(author!=null){
-            author=author.replaceAll(" ", "&nbsp;");
+            author=author.replace(" ", "&nbsp;");
         }
         extentTestThreadLocal.get().assignAuthor(author==null?(System.getProperty("user.name")):author);
     }

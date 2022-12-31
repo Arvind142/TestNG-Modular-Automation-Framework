@@ -14,6 +14,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Properties;
 
 @Slf4j
@@ -35,18 +37,18 @@ class Reporter {
         log.debug("HTML Reporter called");
         log.debug("Output folder created @ "+reportingFolder);
         // creating screenshot folder
-        assetFolder = reportingFolder + ReportingConstants.screenshotFolder;
+        assetFolder = reportingFolder + ReportingConstants.SCREENSHOT_FOLDER;
         File folder = new File(assetFolder);
         log.debug((folder.mkdirs() ? "screenshot folder created" : "screenshot folder creation failed"));
         log.debug("Asset folder created @ " + folder.getAbsolutePath());
 
         // reporting initialized
-        htmlReporter = new ExtentSparkReporter(reportingFolder + ReportingConstants.htmlReportName);
+        htmlReporter = new ExtentSparkReporter(reportingFolder + ReportingConstants.HTML_REPORT_NAME);
         this.reportingFolder = reportingFolder;
         extentReport = new ExtentReports();
-        if (new File(FrameworkConstants.extent_config_xml).exists()) {
+        if (new File(FrameworkConstants.EXTENT_CONFIG_XML).exists()) {
             try {
-                htmlReporter.loadXMLConfig(FrameworkConstants.extent_config_xml);
+                htmlReporter.loadXMLConfig(FrameworkConstants.EXTENT_CONFIG_XML);
             } catch (Exception e) {
                 //do Nothing go with default config
             }
@@ -57,7 +59,8 @@ class Reporter {
     }
 
     private String getUniqueString(){
-        return String.valueOf(Math.random()*100);
+        SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssSSS");
+        return format.format(Calendar.getInstance().getTime())+"_"+(Math.random()*1000);
     }
 
     public String takeScreenShotWebPage(String fileName) {
@@ -70,8 +73,8 @@ class Reporter {
         String imgPath = folderName + fileName;
         File s;
         WebDriver driver = DriverManager.getInstance();
-        if(driver instanceof FirefoxDriver){
-            s = ((FirefoxDriver) driver).getFullPageScreenshotAs(OutputType.FILE);
+        if(driver instanceof FirefoxDriver wd){
+            s = wd.getFullPageScreenshotAs(OutputType.FILE);
         }
         else{
             s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -82,7 +85,7 @@ class Reporter {
             e.printStackTrace();
             return "";
         }
-        return ReportingConstants.screenshotFolder + fileName;
+        return ReportingConstants.SCREENSHOT_FOLDER + fileName;
     }
 
     public String getDeviceDetails() {
@@ -92,13 +95,13 @@ class Reporter {
     public void stopReporting() {
         extentReport.flush();
         log.debug("report flush");
-        System.out.println("Report url: file:///"+htmlReporter.getFile().getAbsolutePath().replace("\\","/"));
+        log.info("Report url: file:///"+htmlReporter.getFile().getAbsolutePath().replace("\\","/"));
         writeSummary();
     }
 
     public void writeSummary(){
         try(
-                FileOutputStream file = new FileOutputStream(reportingFolder+ReportingConstants.summaryFileName)
+                FileOutputStream file = new FileOutputStream(reportingFolder+ReportingConstants.SUMMARY_FILE_NAME)
                 ){
             file.write("[Status] \t[TestCase Name]".getBytes());
             for(Test tests: extentReport.getReport().getTestList()){
@@ -126,6 +129,10 @@ class Reporter {
         }
     }
 
+    public void setSystemVar(String key,String value) {
+        extentReport.setSystemInfo(key, value);
+    }
+
     public String getReportingFolder() {
         return reportingFolder;
     }
@@ -142,7 +149,7 @@ class Reporter {
                 folder.mkdirs();
             }
             String resultFolder;
-            if(ReportingConstants.haveMulipleReportFolder){
+            if(Boolean.TRUE.equals(ReportingConstants.HAVE_MULIPLE_REPORT_FOLDER)){
                 if(folder.listFiles()!=null) {
                     resultFolder = reportingFolderPath + (folder.listFiles().length + 1);
                 }

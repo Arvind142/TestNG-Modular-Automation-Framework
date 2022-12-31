@@ -1,8 +1,8 @@
 package com.core.framework.webdriver;
 
 public enum Browser {
-    Chrome,
-    Edge,
-    InternetExplorer,
-    Firefox
+    CHROME,
+    EDGE,
+    INTERNET_EXPLORER,
+    FIREFOX
 }

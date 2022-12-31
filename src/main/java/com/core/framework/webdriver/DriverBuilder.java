@@ -15,6 +15,8 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -55,13 +57,13 @@ class DriverBuilder {
         this.isRemote = globalProperty.getProperty("isRemote").toLowerCase().startsWith("y");
         this.remoteUrl = (globalProperty.getProperty("remoteUrl"));
         if (browserName.toLowerCase().contains("ie") || browserName.toLowerCase().contains("explorer")) {
-            this.browser = Browser.InternetExplorer;
+            this.browser = Browser.INTERNET_EXPLORER;
         } else if (browserName.toLowerCase().contains("fox") || browserName.toLowerCase().contains("ff")) {
-            this.browser = Browser.Firefox;
+            this.browser = Browser.FIREFOX;
         } else if (browserName.toLowerCase().contains("edge")) {
-            this.browser = Browser.Edge;
+            this.browser = Browser.EDGE;
         } else {
-            this.browser = Browser.Chrome;
+            this.browser = Browser.CHROME;
         }
     }
 
@@ -69,19 +71,19 @@ class DriverBuilder {
         WebDriver driver;
         boolean isCapNull = capabilities==null;
         switch (browser) {
-            case Chrome -> {
+            case CHROME -> {
                 WebDriverManager.chromedriver().setup();
                 driver = new ChromeDriver(!isCapNull ? ((ChromeOptions) capabilities) : new ChromeOptions());
             }
-            case Edge -> {
+            case EDGE -> {
                 WebDriverManager.edgedriver().setup();
                 driver = new EdgeDriver(!isCapNull ? ((EdgeOptions) capabilities) : new EdgeOptions());
             }
-            case Firefox -> {
+            case FIREFOX -> {
                 WebDriverManager.firefoxdriver().setup();
                 driver = new FirefoxDriver(!isCapNull ? ((FirefoxOptions) capabilities) : new FirefoxOptions());
             }
-            case InternetExplorer -> {
+            case INTERNET_EXPLORER -> {
                 WebDriverManager.iedriver().setup();
                 driver = new InternetExplorerDriver(!isCapNull ? ((InternetExplorerOptions) capabilities) : new InternetExplorerOptions());
             }
@@ -90,15 +92,15 @@ class DriverBuilder {
         return driver;
     }
 
-    private WebDriver initializeRemoteWebDriver() throws Exception{
+    private WebDriver initializeRemoteWebDriver() throws MalformedURLException {
         WebDriver driver;
         boolean isCapNull = capabilities==null;
         URL url= new URL(remoteUrl);
         driver = switch (browser) {
-            case Chrome ->
+            case CHROME ->
                     new RemoteWebDriver(url, (!isCapNull ? (capabilities) : new ChromeOptions()));
-            case Edge -> new RemoteWebDriver(url, (!isCapNull ? ( capabilities) : new EdgeOptions()));
-            case Firefox ->
+            case EDGE -> new RemoteWebDriver(url, (!isCapNull ? ( capabilities) : new EdgeOptions()));
+            case FIREFOX ->
                     new RemoteWebDriver(url, (!isCapNull ? (capabilities) : new FirefoxOptions()));
             default -> throw new InvalidArgumentException("Invalid BrowserName");
         };
@@ -107,7 +109,7 @@ class DriverBuilder {
 
     public WebDriver build() throws Exception{
         log.info("build WebDriver with following values: Browser: {}, isRemote: {}, remoteUrl: {}", browser.toString(), isRemote, remoteUrl);
-        if(isRemote){
+        if(Boolean.TRUE.equals(isRemote)){
             return  initializeRemoteWebDriver();
         }
         else{

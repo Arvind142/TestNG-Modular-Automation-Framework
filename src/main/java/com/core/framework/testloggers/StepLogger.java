@@ -1,4 +1,4 @@
-package com.core.framework.testLogs;
+package com.core.framework.testloggers;
 
 import com.aventstack.extentreports.markuputils.Markup;
 

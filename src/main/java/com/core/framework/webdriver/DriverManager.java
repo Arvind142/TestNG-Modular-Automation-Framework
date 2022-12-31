@@ -7,12 +7,11 @@ import org.openqa.selenium.WebDriver;
 
 @Slf4j
 public class DriverManager {
-    private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
 
-    // static block to initialize webdriver threadlocal var with null!
-    static {
-        driverThreadLocal.set(null);
+    private DriverManager(){
+
     }
+    private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
 
     public static WebDriver getWebDriver() throws Exception{
         driverThreadLocal.set((new DriverBuilder()).build());
@@ -40,7 +39,7 @@ public class DriverManager {
     public static void closeConnection() {
         if (driverThreadLocal.get() != null) {
             driverThreadLocal.get().quit();
-            driverThreadLocal.set(null);
+            driverThreadLocal.remove();
         }
     }
 

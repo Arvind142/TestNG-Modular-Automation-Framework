@@ -1,8 +1,12 @@
 package com.core.framework.constant;
 
 public class FrameworkConstants {
-    public static final String application_global_config = "src/test/resources/execution-config.properties";
-    public static final String extent_config_xml = "src/test/resources/extent-config.xml";
-    public static final String not_applicable_const = "NotApplicable";
-    public static final Integer retryFailed = 2;
+    public static final String APPLICATION_GLOBAL_CONFIG = "src/test/resources/execution-config.properties";
+    public static final String EXTENT_CONFIG_XML = "src/test/resources/extent-config.xml";
+    public static final String NOT_APPLICABLE_CONST = "NotApplicable";
+    public static final Integer RETRY_FAILED = 2;
+
+    private FrameworkConstants(){
+        // empty private construct
+    }
 }
