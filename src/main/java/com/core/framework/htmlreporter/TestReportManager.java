@@ -4,7 +4,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.core.framework.WebDriver.DriverManager;
+import com.core.framework.webdriver.DriverManager;
 import com.core.framework.listener.Listener;
 import com.core.framework.testLogs.TableLog;
 import lombok.extern.slf4j.Slf4j;

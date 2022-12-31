@@ -116,10 +116,9 @@ public class Listener implements ITestListener {
 
     @Override
     public void onFinish(ITestContext context) {
+        log.debug("onFinish reached!");
         // flush reporting
         TestReportManager.stopReporting();
-
-        log.debug("onFinish reached!");
     }
 
     // _______________ Helper Methods _______________

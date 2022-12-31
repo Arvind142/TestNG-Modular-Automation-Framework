@@ -3,7 +3,7 @@ package com.core.framework.htmlreporter;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.model.Test;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.WebDriver.DriverManager;
+import com.core.framework.webdriver.DriverManager;
 import com.core.framework.constant.FrameworkConstants;
 import com.core.framework.constant.ReportingConstants;
 import lombok.extern.slf4j.Slf4j;

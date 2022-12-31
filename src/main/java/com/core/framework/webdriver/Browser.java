@@ -1,4 +1,4 @@
-package com.core.framework.WebDriver;
+package com.core.framework.webdriver;
 
 public enum Browser {
     Chrome,

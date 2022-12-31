@@ -1,4 +1,4 @@
-package com.core.framework.WebDriver;
+package com.core.framework.webdriver;
 
 import com.core.framework.listener.Listener;
 import io.github.bonigarcia.wdm.WebDriverManager;

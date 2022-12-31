@@ -1,11 +1,13 @@
 package com.core.test_package;
 
-import com.core.framework.WebDriver.DriverManager;
+import com.core.framework.webdriver.Browser;
+import com.core.framework.webdriver.DriverManager;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -36,6 +38,7 @@ public class TestRunner extends TestNG_Base {
 		WebDriver driver = DriverManager.getWebDriver();
 		driver.get("https://youtube.com");
 		TestReportManager.log(INFO, driver.getCurrentUrl());
+		driver = DriverManager.getInstance();
 		TestReportManager.log("Title verification", "YouTube", driver.getTitle());
 		TestReportManager.log("Title verification", "YouTube", driver.getTitle());
 		TestReportManager.log("Title verification Mismatch", "Youtube_Expected", driver.getTitle());

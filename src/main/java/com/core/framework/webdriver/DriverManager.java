@@ -1,4 +1,4 @@
-package com.core.framework.WebDriver;
+package com.core.framework.webdriver;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.MutableCapabilities;
