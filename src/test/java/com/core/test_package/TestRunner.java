@@ -3,7 +3,7 @@ package com.core.test_package;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
-import com.core.framework.base.TestNG_Base;
+import com.core.framework.base.TestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.testng.SkipException;
@@ -13,7 +13,7 @@ import static com.aventstack.extentreports.Status.*;
 import static org.testng.Assert.*;
 
 @Slf4j
-public class TestRunner extends TestNG_Base {
+public class TestRunner extends TestBase {
 	@DataProvider(name = "default")
 	public Object[][] dataProvider() {
 		Object[][] arg = new Object[8][1];

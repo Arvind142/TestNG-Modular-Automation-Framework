@@ -151,7 +151,7 @@ class Web {
      * @return return path for screenshot
      */
     public String takeScreenShotWebPage(WebDriver driver, String fileName) {
-        String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.screenshotFolder;
+        String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.SCREENSHOT_FOLDER;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -164,7 +164,7 @@ class Web {
             e.printStackTrace();
             return "";
         }
-        return ReportingConstants.screenshotFolder + fileName + ".jpg";
+        return ReportingConstants.SCREENSHOT_FOLDER + fileName + ".jpg";
     }
 
     /**
@@ -175,7 +175,7 @@ class Web {
      */
 
     public String takeScreenShotScreenSnip(String fileName) {
-        String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.screenshotFolder;
+        String folderName = TestReportManager.getReportingFolder() + "/"+ ReportingConstants.SCREENSHOT_FOLDER;
         File f = (new File(folderName));
         if (!f.exists()) {
             f.mkdirs();
@@ -185,7 +185,7 @@ class Web {
             BufferedImage img = new Robot()
                     .createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
             ImageIO.write(img, "png", new File(imgPath));
-            return ReportingConstants.screenshotFolder + fileName + ".png";
+            return ReportingConstants.SCREENSHOT_FOLDER + fileName + ".png";
         } catch (Exception e) {
             e.printStackTrace();
             return "";

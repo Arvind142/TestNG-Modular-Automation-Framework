@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface TestDescription {
-	String author() default FrameworkConstants.not_applicable_const;
-
-	String testDescription() default FrameworkConstants.not_applicable_const;
+	String author() default FrameworkConstants.NOT_APPLICABLE_CONST;
+	String testDescription() default FrameworkConstants.NOT_APPLICABLE_CONST;
 }

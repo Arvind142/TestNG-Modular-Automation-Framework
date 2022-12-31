@@ -7,7 +7,7 @@ import org.testng.ITestResult;
 public class RetryAnalyzer implements IRetryAnalyzer {
 
     int count = 0;
-    int retryCount = FrameworkConstants.retryFailed;
+    int retryCount = FrameworkConstants.RETRY_FAILED;
     @Override
     public boolean retry(ITestResult iTestResult) {
         if(iTestResult.getStatus()==ITestResult.FAILURE){
