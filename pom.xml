@@ -7,8 +7,8 @@
     <artifactId>Modular-Automation-Framework</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
     </properties>
     <build>
         <plugins>
@@ -46,34 +46,28 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.1.0</version>
+            <version>5.3.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-devtools-v104</artifactId>
-            <version>4.4.0</version>
+            <version>4.7.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.6.0</version>
+            <version>7.7.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.codoid.products/fillo -->
         <dependency>
             <groupId>com.codoid.products</groupId>
             <artifactId>fillo</artifactId>
-            <version>1.21</version>
+            <version>1.22</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
@@ -84,10 +78,10 @@
         </dependency>
 
         <dependency>
-  <groupId>commons-net</groupId>
-  <artifactId>commons-net</artifactId>
-  <version>[3.9.0,)</version>
-</dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.9.0</version>
+        </dependency>
 
         <!-- Reporting -->
 
@@ -102,24 +96,24 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.0.0</version>
+            <version>5.2.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.6</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
-            <scope>test</scope>
+            <version>1.4.5</version>
         </dependency>
-
-        <!-- Karate based api testing -->
-        <!-- https://mvnrepository.com/artifact/com.intuit.karate/karate-junit4 -->
-        <dependency>
-            <groupId>com.intuit.karate</groupId>
-            <artifactId>karate-junit4</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-
     </dependencies>
 </project>

@@ -2,16 +2,17 @@ package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
-import com.core.framework.constant.FrameworkConst;
-import com.core.framework.constant.ReportingConst;
-import com.core.framework.htmlreporter.BDDReporter;
-import com.core.framework.htmlreporter.Reporter;
+import com.core.framework.constant.FrameworkConstants;
+import com.core.framework.constant.ReportingConstants;
+import com.core.framework.htmlreporter.TestReportManager;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
 import org.testng.annotations.Test;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 @Slf4j
@@ -20,93 +21,73 @@ public class Listener implements ITestListener {
     public static Properties property;
     // reporting variables
     public String reportingFolder;
-    // html reporter
-    public static Reporter reporter;
-
-    // html reporter
-    public static BDDReporter bddReporter;
 
     @Override
     public void onTestStart(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        System.out.println("================================================================================================================================================");
         String testName = getTestCaseName(result);
-        String author=null, category[]=null;
+        String author=null;
+        String testDescription = null;
+        String[] category =null;
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
-        	author=author.equals(FrameworkConst.not_applicable_const)?null:author;
-        	
-        	category = result.getMethod().getConstructorOrMethod().getMethod()
-    				.getAnnotation(Test.class).groups();
+        	author=author.equals(FrameworkConstants.not_applicable_const)?null:author;
+
+            testDescription = result.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(TestDescription.class).testDescription();
+            testDescription=testDescription.equals(FrameworkConstants.not_applicable_const)?null:testDescription;
+
+            category = result.getMethod().getConstructorOrMethod().getMethod()
+                    .getAnnotation(Test.class).groups();
         	category=category.length==0?null:category;
+
         }
         catch(Exception e) {
         	log.warn("@TestDescription is not used with "+testName);
         }
         if(author!=null && category!=null) {
-        	author=author.replaceAll(" ", "&nbsp;");
-        	reporter.onTestStart(testName, author, category);
+        	TestReportManager.onTestStart(testName,testDescription, author, category);
         }
         else if(author!=null) {
-        	author=author.replaceAll(" ", "&nbsp;");
-        	reporter.onTestStart(testName, author);
+            TestReportManager.onTestStart(testName,testDescription, author);
         }
         else {
-        	reporter.onTestStart(testName);
+            TestReportManager.onTestStart(testName,testDescription);
         }
-        reporter.log(testName, Status.INFO, "test execution started!");
-    }
-
-    public void onTestCompletion(String testName) {
-        reporter.log(testName, Status.INFO, "test execution completed!");
-        System.out.println("================================================================================================================================================");
+        TestReportManager.checkAndAddParametersToReport(result);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
-//        reporter.log(testName, Status.PASS, "testcase passed / No Exception recorded!");
-        onTestCompletion(testName);
+        TestReportManager.attachSnapshot();
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
-        reporter.log(testName, Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
-        onTestCompletion(testName);
+        TestReportManager.log(Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
+        TestReportManager.checkAndAddRetryReport(result);
+        TestReportManager.attachSnapshot();
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
+        // testcase is being retried
+        if(result.wasRetried()){
+            onTestFailure(result);
             return;
-        String testName = getTestCaseName(result);
+        }
         if(result.getSkipCausedBy().size()==0) {
-        	reporter.log(testName, Status.SKIP, "testcase skipped! ");
+            TestReportManager.log(Status.SKIP, "testcase skipped! ");
         }
         else {
-        	reporter.log(testName, Status.SKIP, "testcase skipped! [ cause: "+result.getSkipCausedBy().get(0).getMethodName()+" ]");
+            TestReportManager.log(Status.SKIP, "testcase skipped! [ cause: "+result.getSkipCausedBy().get(0).getMethodName()+" ]");
         }
-        onTestCompletion(testName);
+        TestReportManager.attachSnapshot();
     }
 
     @Override
     public void onTestFailedWithTimeout(ITestResult result) {
-        // check if its is cucumber based execution
-        if(isItKarateBasedRunner(result))
-            return;
-        String testName = getTestCaseName(result);
-        reporter.log(testName, Status.FAIL, "testcase failed with timeout!");
+        TestReportManager.log(Status.FAIL, "testcase failed with timeout!");
         this.onTestFailure(result);
     }
 
@@ -116,7 +97,7 @@ public class Listener implements ITestListener {
         log.debug("log initialized!");
 
         // read config to start with base
-        property = readProperty(FrameworkConst.application_global_config);
+        property = readProperty(FrameworkConstants.application_global_config);
 
         if (property != null) {
             log.debug("execution property read");
@@ -124,48 +105,59 @@ public class Listener implements ITestListener {
             log.error("failed to read property file");
         }
         // updating reporting folder
-        reportingFolder = ReportingConst.resultFolder;
+        reportingFolder = ReportingConstants.resultFolder;
 
         //reporting initialized
-        reporter = Reporter.initializeReporting(reportingFolder);
+        TestReportManager.initializeReporting(reportingFolder);
 
         // loading properties data into report
-        reporter.setSystemVars(property);
-
-        bddReporter = BDDReporter.initializeReporting();
+        TestReportManager.setSystemVars(property);
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        // flush reporting
-        reporter.stopReporting();
-        // write summary
-        reporter.writeSummaryFiles();
-
         log.debug("onFinish reached!");
+        // flush reporting
+        TestReportManager.stopReporting();
     }
 
     // _______________ Helper Methods _______________
     public static String getTestCaseName(ITestResult result) {
         String[] resultDataArray = result.getMethod().getQualifiedName().split("\\.");
         String testName = resultDataArray[resultDataArray.length - 2] + "." + resultDataArray[resultDataArray.length - 1];
+
+        // get parameters if any :)
+        List<String> paramString = getParameter(result);
+        if(paramString!=null){
+            // returning test name
+            return (testName + " - [ " + paramString.stream().toArray()[0]+" ]");
+        }
+        return testName;
+    }
+
+    public static List<String> getParameter(ITestResult result){
         // if no parameter then return test name
         if (result.getParameters().length == 0)
-            return testName;
+            return null;
 
-        //get first parameter out of result as we have parameter passed to our test method
-        Object paramObject = result.getParameters()[0];
+        // get all parameters
+        List<Object> objectList = Arrays.stream(result.getParameters()).toList();
 
-        // if given data is Object array
-        if (paramObject instanceof Object[]) {
-            paramObject = ((Object[]) paramObject)[0];
+        // new parameter list to fetch all params ( including variable length parameters)
+        List<String> newObjectList = new ArrayList<>();
+
+        // iterate over list
+        for (Object currentObject : objectList) {
+            // if parameter is of variable length args
+            if (currentObject instanceof Object[]) {
+                for (Object obj : ((Object[]) currentObject)) {
+                    newObjectList.add(String.valueOf(obj));
+                }
+            } else {
+                newObjectList.add(String.valueOf(currentObject));
+            }
         }
-
-        // converting object to String
-        String paramString = String.valueOf(paramObject);
-
-        // returning test name
-        return (testName + ".[" + paramString + "]");
+        return  newObjectList;
     }
 
 
@@ -178,17 +170,21 @@ public class Listener implements ITestListener {
             return null;
         }
 
-        return properties;
-    }
+        // replace property values with env vars :)
+        for(Object iterator:properties.keySet()){
+            if(System.getenv().containsKey(iterator)){
+                log.trace("Env value found against key: {}",iterator);
+                String systemEnvValue = System.getenv(iterator.toString());
+                if(systemEnvValue.equalsIgnoreCase(properties.getProperty(iterator.toString()))){
+                    log.trace("key has env value same as property value");
+                }
+                else{
+                    log.trace("key has env value as {} and property value as {}",systemEnvValue,properties.getProperty(iterator.toString()));
+                    properties.replace(iterator,System.getenv(iterator.toString()));
+                }
+            }
+        }
 
-    public boolean isItKarateBasedRunner(ITestResult result){
-        try{
-            String isBDD = result.getMethod().getConstructorOrMethod().getMethod()
-                    .getAnnotation(TestDescription.class).isBDD();
-            return !(isBDD.equalsIgnoreCase(FrameworkConst.not_applicable_const));
-        }
-        catch(Exception e){
-            return false;
-        }
+        return properties;
     }
 }
