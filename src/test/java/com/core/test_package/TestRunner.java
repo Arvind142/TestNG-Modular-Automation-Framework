@@ -1,22 +1,20 @@
 package com.core.test_package;
 
-import com.core.framework.listener.Listener;
+import com.core.framework.webdriver.Browser;
+import com.core.framework.webdriver.DriverManager;
+import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
-import com.core.utility.Web;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
-import org.testng.Assert;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-
-import java.net.MalformedURLException;
-
 import static com.aventstack.extentreports.Status.*;
+import static org.testng.Assert.*;
+
 @Slf4j
-@Listeners(Listener.class)
 public class TestRunner extends TestNG_Base {
 	@DataProvider(name = "default")
 	public Object[][] dataProvider() {
@@ -34,32 +32,30 @@ public class TestRunner extends TestNG_Base {
 
 	@Test
 	@TestDescription(author = "Choudhary, Arvind")
-	public void testNoArgs() throws MalformedURLException {
-		testMethod = getTestCaseName();
-		reporter.log(testMethod, INFO, "test Executed");
-		reporter.log(testMethod, PASS, "FirstLOG");
-		Web web = new Web();
-		WebDriver driver = web.initializeWebDriver();
-		driver.get("https://google.com");
-		reporter.log(testMethod, INFO, driver.getCurrentUrl());
-		reporter.log(testMethod, "Title verification", "Google", driver.getTitle());
-		reporter.log(testMethod, "Title verification", "Google", driver.getTitle(), reporter.takeScreenShotWebPage(driver, "someName"));
-		reporter.log(testMethod, "Title verification Mismatch", "Google_Expected", driver.getTitle(), driver);
-		driver.quit();
+	public void testNoArgs() throws Exception{
+		TestReportManager.log(INFO, "test Executed");
+		TestReportManager.log(PASS, "FirstLOG");
+		WebDriver driver = DriverManager.getWebDriver();
+		driver.get("https://youtube.com");
+		TestReportManager.log(INFO, driver.getCurrentUrl());
+		driver = DriverManager.getInstance();
+		TestReportManager.log("Title verification", "YouTube", driver.getTitle());
+		TestReportManager.log("Title verification", "YouTube", driver.getTitle());
+		TestReportManager.log("Title verification Mismatch", "Youtube_Expected", driver.getTitle());
 	}
 
 	@Test(dataProvider = "default")
 	@TestDescription(author = "Choudhary, Arvind")
 	public void test2Args(Object arg1) {
-		testMethod = getTestCaseName(arg1);
-		reporter.log(testMethod, INFO, "test Executed");
+//		System.out.println(arg1);
+		TestReportManager.log(INFO, "test Executed: "+arg1);
 	}
 
 	@Test(dataProvider = "default",groups = "valid Working case with Object... as arguments")
 	@TestDescription(author = "Choudhary, Arvind")
 	public void testArgs(Object... arg2) {
-		testMethod = getTestCaseName(arg2);
-		reporter.log(testMethod, INFO, "test Executed");
+//		System.out.println(arg2[0]);
+		TestReportManager.log(INFO, "test Executed: "+arg2[0]);
 	}
 
 	@Test(timeOut = 1)
@@ -79,38 +75,33 @@ public class TestRunner extends TestNG_Base {
 	@Test
 	@TestDescription(author = "Choudhary, Arvind")
 	public void testFailedWithAssertfailed() {
-		Assert.assertEquals(0, 1);
+		assertEquals(0, 1);
 	}
 
 	@Test
 	public void parentSuccessTest() {
-		testMethod = getTestCaseName();
-		reporter.log(testMethod, INFO, "testExecuted");
+		TestReportManager.log(INFO, "testExecuted");
 	}
 
 	@Test(dependsOnMethods = {"parentSuccessTest"})
 	public void childSuccessTest() {
-		testMethod = getTestCaseName();
-		reporter.log(testMethod, INFO, "testExecuted");
+		TestReportManager.log(INFO, "testExecuted");
 	}
 
 	@Test
 	public void parentFailTest() {
-		testMethod = getTestCaseName();
-		reporter.log(testMethod, INFO, "testExecuted");
-		Assert.assertEquals(0, 1);
+		TestReportManager.log(INFO, "testExecuted");
+		assertEquals(0, 1);
 	}
 
 	@Test(dependsOnMethods = {"parentFailTest"})
 	public void childFailTest() {
-		testMethod = getTestCaseName();
-		reporter.log(testMethod, INFO, "testExecuted");
+		TestReportManager.log(INFO, "testExecuted");
 	}
 
 	@Test(invocationCount = 5)
 	public void invokeTestMethod() {
-		testMethod = getTestCaseName();
-		reporter.log(testMethod, INFO, "testExecuted");
+		TestReportManager.log(INFO, "testExecuted");
 	}
 }
 
