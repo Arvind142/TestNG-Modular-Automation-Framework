@@ -3,7 +3,7 @@ package com.core.framework.htmlreporter;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.model.Test;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.Manager.DriverManager;
+import com.core.framework.WebDriver.DriverManager;
 import com.core.framework.constant.FrameworkConstants;
 import com.core.framework.constant.ReportingConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +14,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 @Slf4j
@@ -71,7 +69,7 @@ class Reporter {
         fileName = fileName+"_"+getUniqueString()+".jpg";
         String imgPath = folderName + fileName;
         File s;
-        WebDriver driver = DriverManager.getWebDriver();
+        WebDriver driver = DriverManager.getInstance();
         if(driver instanceof FirefoxDriver){
             s = ((FirefoxDriver) driver).getFullPageScreenshotAs(OutputType.FILE);
         }

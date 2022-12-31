@@ -171,6 +171,21 @@ public class Listener implements ITestListener {
             return null;
         }
 
+        // replace property values with env vars :)
+        for(Object iterator:properties.keySet()){
+            if(System.getenv().containsKey(iterator)){
+                log.trace("Env value found against key: {}",iterator);
+                String systemEnvValue = System.getenv(iterator.toString());
+                if(systemEnvValue.equalsIgnoreCase(properties.getProperty(iterator.toString()))){
+                    log.trace("key has env value same as property value");
+                }
+                else{
+                    log.trace("key has env value as {} and property value as {}",systemEnvValue,properties.getProperty(iterator.toString()));
+                    properties.replace(iterator,System.getenv(iterator.toString()));
+                }
+            }
+        }
+
         return properties;
     }
 }

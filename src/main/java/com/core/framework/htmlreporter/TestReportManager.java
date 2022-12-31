@@ -4,12 +4,13 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
-import com.core.framework.Manager.DriverManager;
+import com.core.framework.WebDriver.DriverManager;
 import com.core.framework.listener.Listener;
 import com.core.framework.testLogs.TableLog;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestResult;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,7 +59,7 @@ public class TestReportManager {
         if(result.getParameters().length!=0){
             extentTestThreadLocal.get().log(Status.INFO,MarkupHelper.createTable(new String[][]{
                     {"Initialized with below params"},
-                    {Arrays.toString(Listener.getParameter(result).stream().toArray())},
+                    {Arrays.toString(Objects.requireNonNull(Listener.getParameter(result)).toArray())},
             }));
         }
     }

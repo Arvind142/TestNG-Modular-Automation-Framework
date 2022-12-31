@@ -1,6 +1,6 @@
 package com.core.test_package;
 
-import com.core.framework.Manager.DriverManager;
+import com.core.framework.WebDriver.DriverManager;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestNG_Base;
@@ -30,7 +30,7 @@ public class TestRunner extends TestNG_Base {
 
 	@Test
 	@TestDescription(author = "Choudhary, Arvind")
-	public void testNoArgs() {
+	public void testNoArgs() throws Exception{
 		TestReportManager.log(INFO, "test Executed");
 		TestReportManager.log(PASS, "FirstLOG");
 		WebDriver driver = DriverManager.getWebDriver();
