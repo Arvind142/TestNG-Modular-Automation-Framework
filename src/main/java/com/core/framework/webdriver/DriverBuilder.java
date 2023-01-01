@@ -70,23 +70,28 @@ class DriverBuilder {
         WebDriver driver;
         boolean isCapNull = capabilities==null;
         switch (browser) {
-            case CHROME -> {
+            case CHROME: {
                 WebDriverManager.chromedriver().setup();
                 driver = new ChromeDriver(!isCapNull ? ((ChromeOptions) capabilities) : new ChromeOptions());
+                break;
             }
-            case EDGE -> {
+            case EDGE: {
                 WebDriverManager.edgedriver().setup();
                 driver = new EdgeDriver(!isCapNull ? ((EdgeOptions) capabilities) : new EdgeOptions());
+                break;
             }
-            case FIREFOX -> {
+            case FIREFOX: {
                 WebDriverManager.firefoxdriver().setup();
                 driver = new FirefoxDriver(!isCapNull ? ((FirefoxOptions) capabilities) : new FirefoxOptions());
+                break;
             }
-            case INTERNET_EXPLORER -> {
+            case INTERNET_EXPLORER: {
                 WebDriverManager.iedriver().setup();
                 driver = new InternetExplorerDriver(!isCapNull ? ((InternetExplorerOptions) capabilities) : new InternetExplorerOptions());
+                break;
             }
-            default -> throw new InvalidArgumentException("Invalid BrowserName");
+            default:
+                throw new InvalidArgumentException("Invalid BrowserName");
         }
         return driver;
     }
@@ -95,14 +100,19 @@ class DriverBuilder {
         WebDriver driver;
         boolean isCapNull = capabilities==null;
         URL url= new URL(remoteUrl);
-        driver = switch (browser) {
-            case CHROME ->
-                    new RemoteWebDriver(url, (!isCapNull ? (capabilities) : new ChromeOptions()));
-            case EDGE -> new RemoteWebDriver(url, (!isCapNull ? ( capabilities) : new EdgeOptions()));
-            case FIREFOX ->
-                    new RemoteWebDriver(url, (!isCapNull ? (capabilities) : new FirefoxOptions()));
-            default -> throw new InvalidArgumentException("Invalid BrowserName");
-        };
+        switch (browser) {
+            case CHROME:
+                    driver = new RemoteWebDriver(url, (!isCapNull ? (capabilities) : new ChromeOptions()));
+                    break;
+            case EDGE:
+                driver = new RemoteWebDriver(url, (!isCapNull ? ( capabilities) : new EdgeOptions()));
+                break;
+            case FIREFOX:
+                driver = new RemoteWebDriver(url, (!isCapNull ? (capabilities) : new FirefoxOptions()));
+                break;
+            default:
+                throw new InvalidArgumentException("Invalid BrowserName");
+        }
         return driver;
     }
 

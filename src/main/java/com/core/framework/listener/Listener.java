@@ -152,8 +152,8 @@ public class Listener implements ITestListener {
         // iterate over list
         for (Object currentObject : objectList) {
             // if parameter is of variable length args
-            if (currentObject instanceof Object[] objArray) {
-                for (Object obj : objArray) {
+            if (currentObject instanceof Object[]) {
+                for (Object obj : (Object[])currentObject) {
                     newObjectList.add(String.valueOf(obj));
                 }
             } else {
