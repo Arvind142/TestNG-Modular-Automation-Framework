@@ -76,8 +76,8 @@ class Reporter {
         String imgPath = folderName + fileName;
         File s;
         WebDriver driver = DriverManager.getInstance();
-        if(driver instanceof FirefoxDriver wd){
-            s = wd.getFullPageScreenshotAs(OutputType.FILE);
+        if(driver instanceof FirefoxDriver){
+            s = ((FirefoxDriver) driver).getFullPageScreenshotAs(OutputType.FILE);
         }
         else{
             s = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);

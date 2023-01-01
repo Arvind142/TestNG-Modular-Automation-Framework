@@ -144,7 +144,9 @@ public class TableLog implements StepLogger {
                     || (expectedValue instanceof String[] && actualValue instanceof String[])) {
 
                 // String comparison
-                if (expectedValue instanceof String[] exps && actualValue instanceof String[] acts) {
+                if (expectedValue instanceof String[] && actualValue instanceof String[]) {
+                    String[] exps = (String[]) expectedValue;
+                    String[] acts = (String[]) actualValue;
                     exp = TableLog.getPrintableStringOfArray(exps);
                     act = TableLog.getPrintableStringOfArray(acts);
                 } else {
@@ -187,7 +189,9 @@ public class TableLog implements StepLogger {
                     || (expectedValue instanceof Float[] && actualValue instanceof Float[])) {
 
                 // Float comparison
-                if (expectedValue instanceof Float[] exps && actualValue instanceof Float[] acts) {
+                if (expectedValue instanceof Float[]  && actualValue instanceof Float[]) {
+                    Float[] exps = (Float[]) expectedValue;
+                    Float[] acts = (Float[]) actualValue;
                     exp = TableLog.getPrintableStringOfArray(exps);
                     act = TableLog.getPrintableStringOfArray(acts);
                 } else {
