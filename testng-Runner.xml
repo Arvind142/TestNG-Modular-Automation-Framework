@@ -2,8 +2,8 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Suite">
     <test name="Test">
-        <classes>
-            <class name="com.core.test_package.BDDRunner"></class>
-        </classes>
+        <packages>
+            <package name="com.core.test_package.*"></package>
+        </packages>
     </test> <!-- Test -->
 </suite> <!-- Suite -->
