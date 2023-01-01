@@ -69,6 +69,10 @@ public class TestReportManager {
         }
     }
 
+    public static void addDependsOnInfoLog(String type,String dependsON){
+        extentTestThreadLocal.get().log(Status.INFO,MarkupHelper.createLabel("TestCase was dependent on "+type+"/s "+dependsON+"", ExtentColor.GREEN));
+    }
+
     public static void checkAndAddRetryReport(ITestResult result){
         if(result.wasRetried()){
             extentTestThreadLocal.get().log(Status.INFO,MarkupHelper.createLabel("TestCase will be retried", ExtentColor.AMBER));

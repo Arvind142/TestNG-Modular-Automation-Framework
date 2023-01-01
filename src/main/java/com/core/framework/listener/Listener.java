@@ -21,6 +21,8 @@ public class Listener implements ITestListener {
         String author=null;
         String testDescription = null;
         String[] category =null;
+        String[] dependsOnMethod = null;
+        String[] dependsOnGroup = null;
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
@@ -29,15 +31,23 @@ public class Listener implements ITestListener {
             testDescription = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(TestDescription.class).testDescription();
             testDescription=testDescription.equals(FrameworkConstants.NOT_APPLICABLE_CONST)?null:testDescription;
-
-            category = result.getMethod().getConstructorOrMethod().getMethod()
-                    .getAnnotation(Test.class).groups();
-        	category=category.length==0?null:category;
-
         }
         catch(Exception e) {
         	log.warn("@TestDescription is not used with "+testName);
         }
+
+        category = result.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).groups();
+        category=category.length==0?null:category;
+
+        dependsOnMethod = result.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).dependsOnMethods();
+        dependsOnMethod=dependsOnMethod.length==0?null:dependsOnMethod;
+
+        dependsOnGroup = result.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).dependsOnGroups();
+        dependsOnGroup=dependsOnGroup.length==0?null:dependsOnGroup;
+
         if(author!=null && category!=null) {
         	TestReportManager.onTestStart(testName,testDescription, author, category);
         }
@@ -46,6 +56,14 @@ public class Listener implements ITestListener {
         }
         else {
             TestReportManager.onTestStart(testName,testDescription);
+        }
+        if(dependsOnGroup!=null || dependsOnMethod!=null){
+            if(dependsOnMethod!=null){
+                TestReportManager.addDependsOnInfoLog("Method", Arrays.toString(dependsOnMethod));
+            }
+            if(dependsOnGroup!=null){
+                TestReportManager.addDependsOnInfoLog("Group",Arrays.toString(dependsOnMethod));
+            }
         }
         TestReportManager.checkAndAddParametersToReport(result);
     }
