@@ -28,7 +28,7 @@ ___
 ### Feature Status
 |Feature |Working(status) |
 |--|--|
-|Logging|logback|
+|Logging|Y|
 |HTML Report (Extent Report)|Y|
 |Parallel Test Execution|Y |
 |@TestDescription|Y|
