@@ -1,7 +1,5 @@
 package com.core.utility;
 
-import java.io.Serializable;
-
 public enum WebLocator {
     ID,
     NAME,

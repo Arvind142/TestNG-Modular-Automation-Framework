@@ -1,6 +1,7 @@
 package com.core.framework.webdriver;
 
-import com.core.framework.listener.Listener;
+import com.core.framework.config.ConfigFactory;
+import com.core.framework.config.FrameworkConfig;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidArgumentException;
@@ -15,10 +16,8 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 
 @Slf4j
 class DriverBuilder {
@@ -52,10 +51,10 @@ class DriverBuilder {
     }
 
     private void loadProperties() {
-        Properties globalProperty = Listener.property;
-        String browserName = globalProperty.getProperty("browser");
-        this.isRemote = globalProperty.getProperty("isRemote").toLowerCase().startsWith("y");
-        this.remoteUrl = (globalProperty.getProperty("remoteUrl"));
+        FrameworkConfig frameworkConfig = ConfigFactory.getConfig();
+        String browserName = frameworkConfig.browser();
+        this.isRemote = frameworkConfig.isRemote();
+        this.remoteUrl = frameworkConfig.remoteUrl();
         if (browserName.toLowerCase().contains("ie") || browserName.toLowerCase().contains("explorer")) {
             this.browser = Browser.INTERNET_EXPLORER;
         } else if (browserName.toLowerCase().contains("fox") || browserName.toLowerCase().contains("ff")) {

@@ -2,20 +2,18 @@ package com.core.framework.listener;
 
 import com.aventstack.extentreports.Status;
 import com.core.framework.annotation.TestDescription;
+import com.core.framework.config.ConfigFactory;
+import com.core.framework.config.FrameworkConfig;
 import com.core.framework.constant.FrameworkConstants;
 import com.core.framework.constant.ReportingConstants;
 import com.core.framework.htmlreporter.TestReportManager;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.*;
 import org.testng.annotations.Test;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 
 @Slf4j
 public class Listener implements ITestListener {
-    //base Property
-    public static final Properties property = new Properties();
 
     @Override
     public void onTestStart(ITestResult result) {
@@ -23,6 +21,8 @@ public class Listener implements ITestListener {
         String author=null;
         String testDescription = null;
         String[] category =null;
+        String[] dependsOnMethod = null;
+        String[] dependsOnGroup = null;
         try {
         	author = result.getMethod().getConstructorOrMethod().getMethod()
     				.getAnnotation(TestDescription.class).author();
@@ -31,15 +31,23 @@ public class Listener implements ITestListener {
             testDescription = result.getMethod().getConstructorOrMethod().getMethod()
                     .getAnnotation(TestDescription.class).testDescription();
             testDescription=testDescription.equals(FrameworkConstants.NOT_APPLICABLE_CONST)?null:testDescription;
-
-            category = result.getMethod().getConstructorOrMethod().getMethod()
-                    .getAnnotation(Test.class).groups();
-        	category=category.length==0?null:category;
-
         }
         catch(Exception e) {
         	log.warn("@TestDescription is not used with "+testName);
         }
+
+        category = result.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).groups();
+        category=category.length==0?null:category;
+
+        dependsOnMethod = result.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).dependsOnMethods();
+        dependsOnMethod=dependsOnMethod.length==0?null:dependsOnMethod;
+
+        dependsOnGroup = result.getMethod().getConstructorOrMethod().getMethod()
+                .getAnnotation(Test.class).dependsOnGroups();
+        dependsOnGroup=dependsOnGroup.length==0?null:dependsOnGroup;
+
         if(author!=null && category!=null) {
         	TestReportManager.onTestStart(testName,testDescription, author, category);
         }
@@ -48,6 +56,14 @@ public class Listener implements ITestListener {
         }
         else {
             TestReportManager.onTestStart(testName,testDescription);
+        }
+        if(dependsOnGroup!=null || dependsOnMethod!=null){
+            if(dependsOnMethod!=null){
+                TestReportManager.addDependsOnInfoLog("Method", Arrays.toString(dependsOnMethod));
+            }
+            if(dependsOnGroup!=null){
+                TestReportManager.addDependsOnInfoLog("Group",Arrays.toString(dependsOnMethod));
+            }
         }
         TestReportManager.checkAndAddParametersToReport(result);
     }
@@ -90,24 +106,15 @@ public class Listener implements ITestListener {
     public void onStart(ITestContext context) {
 
         log.debug("log initialized!");
-
-        // read config to start with base
-        readProperty(FrameworkConstants.APPLICATION_GLOBAL_CONFIG);
-
-        if (!property.isEmpty()) {
-            log.debug("execution property read");
-        } else {
-            log.error("failed to read property file");
-        }
+        FrameworkConfig frameworkConfig = ConfigFactory.getConfig();
+        log.trace("Config initialized");
 
         //reporting initialized
         TestReportManager.initializeReporting(ReportingConstants.RESULT_FOLDER);
         // set trigger information
         TestReportManager.setTriggerDetails(context);
         // loading properties data into report
-        TestReportManager.setSystemVars(property);
-
-
+        TestReportManager.setSystemVars(frameworkConfig);
     }
 
     @Override
@@ -115,9 +122,6 @@ public class Listener implements ITestListener {
         log.debug("onFinish reached!");
         // flush reporting
         TestReportManager.stopReporting();
-        if(!property.isEmpty()){
-            property.clear();
-        }
     }
 
     // _______________ Helper Methods _______________
@@ -140,7 +144,7 @@ public class Listener implements ITestListener {
             return new ArrayList<>();
 
         // get all parameters
-        List<Object> objectList = Arrays.asList(Arrays.stream(result.getParameters()).toArray());
+        Object[] objectList = result.getParameters();
 
         // new parameter list to fetch all params ( including variable length parameters)
         List<String> newObjectList = new ArrayList<>();
@@ -157,29 +161,5 @@ public class Listener implements ITestListener {
             }
         }
         return  newObjectList;
-    }
-
-
-    public void readProperty(String propertyFilePath) {
-        try (InputStream ins = new FileInputStream(propertyFilePath)) {
-            Listener.property.load(ins);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // replace property values with env vars :)
-        for(Object iterator:Listener.property.keySet()){
-            if(System.getenv().containsKey(iterator)){
-                log.trace("Env value found against key: {}",iterator);
-                String systemEnvValue = System.getenv(iterator.toString());
-                if(systemEnvValue.equalsIgnoreCase(Listener.property.getProperty(iterator.toString()))){
-                    log.trace("key has env value same as property value");
-                }
-                else{
-                    log.trace("key has env value as {} and property value as {}",systemEnvValue,Listener.property.getProperty(iterator.toString()));
-                    Listener.property.replace(iterator,System.getenv(iterator.toString()));
-                }
-            }
-        }
     }
 }
