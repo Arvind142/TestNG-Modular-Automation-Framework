@@ -10,7 +10,6 @@ import com.aventstack.extentreports.markuputils.MarkupHelper;
  * @author arvin
  *
  */
-
 public class TableLog implements StepLogger {
     /**
      * holds step description

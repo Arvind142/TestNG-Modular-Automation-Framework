@@ -115,5 +115,15 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.aeonbits.owner</groupId>
+            <artifactId>owner</artifactId>
+            <version>1.0.12</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.jemos.podam</groupId>
+            <artifactId>podam</artifactId>
+            <version>7.2.11.RELEASE</version>
+        </dependency>
     </dependencies>
 </project>

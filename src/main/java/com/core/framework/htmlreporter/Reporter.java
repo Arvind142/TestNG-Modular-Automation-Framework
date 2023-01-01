@@ -3,6 +3,8 @@ package com.core.framework.htmlreporter;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.model.Test;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.core.framework.config.ConfigFactory;
+import com.core.framework.config.FrameworkConfig;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.constant.FrameworkConstants;
 import com.core.framework.constant.ReportingConstants;
@@ -114,19 +116,15 @@ class Reporter {
         }
     }
 
-    public void setSystemVars(Properties props) {
-
-        if (props == null)
-            return;
-        if (props.isEmpty())
-            return;
+    public void setSystemVars(FrameworkConfig frameworkConfig) {
         try {
-        	this.deviceDetails = System.getProperty("os.name")+"/"+props.getProperty("browser");
+        	this.deviceDetails = System.getProperty("os.name")+"/"+frameworkConfig.browser();
         }
         catch(NullPointerException ex) { this.deviceDetails =null;}
-        //adding property file details onto report
-        for (Object key : props.keySet()) {
-            extentReport.setSystemInfo(key.toString(), props.getProperty(key.toString()));
+        extentReport.setSystemInfo("Browser", frameworkConfig.browser());
+        extentReport.setSystemInfo("Remote Execution", frameworkConfig.isRemote()?"Y":"N");
+        if(Boolean.TRUE.equals(frameworkConfig.isRemote())){
+            extentReport.setSystemInfo("remote url", frameworkConfig.remoteUrl());
         }
     }
 

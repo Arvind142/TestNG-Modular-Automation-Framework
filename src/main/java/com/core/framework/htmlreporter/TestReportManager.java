@@ -4,6 +4,7 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.core.framework.config.FrameworkConfig;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.listener.Listener;
 import com.core.framework.testloggers.TableLog;
@@ -12,7 +13,6 @@ import org.testng.ITestContext;
 import org.testng.ITestResult;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -75,8 +75,8 @@ public class TestReportManager {
         }
     }
 
-    public static synchronized void setSystemVars(Properties pros){
-        reporter.setSystemVars(pros);
+    public static synchronized void setSystemVars(FrameworkConfig frameworkConfig){
+        reporter.setSystemVars(frameworkConfig);
     }
 
     public static synchronized void setTriggerDetails(ITestContext context){
