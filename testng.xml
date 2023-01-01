@@ -6,9 +6,8 @@
         <!-- Listener Class declaration -->
     </listeners>
     <test name="Test">
-        <packages>
-            <!-- test package declaration -->
-            <package name="com.core.test_package.*"></package>
-        </packages>
+        <classes>
+            <class name="com.core.test_package.TestClass"></class>
+        </classes>
     </test> <!-- Test -->
 </suite> <!-- Suite -->

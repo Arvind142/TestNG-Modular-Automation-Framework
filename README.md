@@ -13,12 +13,12 @@ ___
 
 #### Feature List:
 1. Extent Test Report on test completion.
-2. TestNG_Base class to takecare of framework initialization.(**Make sure to extent TestNG_Base on your Test Classes 😁**).
+2. TestBase class to takecare of framework initialization.(**Make sure to extend your Test Classes with TestBase 😁**).
 3. @TestDescription annotation to add below details on TestCases:
     1. *Author*: Testcase Author
     2. *Test Description*: Test case description (It reflects under testcase name in Report).
 4.  use @Slf4j to add logs to your test scripts.
-5. Works with below mentioned TestNG features:
+5. Works with below-mentioned TestNG features:
     1. XML and Class Base test execution.
     2. dataProvider (run same test method multiple times).
     3. invocationCount (no. of time tests to be invoked).
