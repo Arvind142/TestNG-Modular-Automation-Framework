@@ -100,6 +100,7 @@ class Reporter {
         log.debug("report flush");
         log.info("Report url: file:///"+htmlReporter.getFile().getAbsolutePath().replace("\\","/"));
         writeSummary();
+        ResultZipper.zipResults(reportingFolder);
     }
 
     public void writeSummary(){

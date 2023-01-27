@@ -8,6 +8,8 @@ public class ReportingConstants {
     public static final String PAYLOAD_FOLDER = "payloads/";
     public static final String HTML_REPORT_NAME = "result.html";
 
+    public static final boolean ZIP_RESULTS = true;
+
     private ReportingConstants(){
        // private constructor
     }
