@@ -1,9 +1,9 @@
 package com.core.framework.htmlreporter;
 
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.model.Test;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
-import com.core.framework.config.ConfigFactory;
 import com.core.framework.config.FrameworkConfig;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.constant.FrameworkConstants;
@@ -18,8 +18,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Properties;
+import java.util.List;
 
 @Slf4j
 class Reporter {
@@ -107,9 +108,40 @@ class Reporter {
         try(
                 FileOutputStream file = new FileOutputStream(reportingFolder+ReportingConstants.SUMMARY_FILE_NAME)
                 ){
-            file.write("[Status] \t[TestCase Name]".getBytes());
+            int pass = 0;
+            int fail = 0;
+            int skip = 0;
+            int warn = 0;
+            int info = 0;
+            List<byte[]> testList = new ArrayList<>();
             for(Test tests: extentReport.getReport().getTestList()){
-                file.write(("\r\n"+tests.getStatus()+"\t\t"+ tests.getName()).getBytes());
+                // for test Summary
+                testList.add(("\r\n"+tests.getStatus()+"\t\t"+ tests.getName()).getBytes());
+                // for Summary
+                pass = (tests.getStatus() == Status.PASS) ? (pass + 1) : pass;
+                fail = (tests.getStatus() == Status.FAIL) ? (fail + 1) : fail;
+                skip = (tests.getStatus() == Status.SKIP) ? (skip + 1) : skip;
+                warn = (tests.getStatus() == Status.WARNING) ? (warn + 1) : warn;
+                info = (tests.getStatus() == Status.INFO) ? (info + 1) : info;
+            }
+
+            // write overall summary :)
+            file.write("||------------------|| SUMMARY ||------------------||".getBytes());
+            file.write(("\r\nPASS ➡ "+pass).getBytes());
+            file.write(("\r\nFAIL ➡ "+fail).getBytes());
+            file.write(("\r\nSKIP ➡ "+skip).getBytes());
+            file.write(("\r\nWARN ➡ "+warn).getBytes());
+            file.write(("\r\nINFO ➡ "+info).getBytes());
+
+            // few new lines :)
+            file.write("\r\n".getBytes());
+            file.write("\r\n".getBytes());
+            file.write("\r\n".getBytes());
+
+            // write test summary
+            file.write("||------------------|| Test Summary ||------------------||".getBytes());
+            for(byte[] bytes:testList) {
+                file.write(bytes);
             }
         }
         catch (Exception e){

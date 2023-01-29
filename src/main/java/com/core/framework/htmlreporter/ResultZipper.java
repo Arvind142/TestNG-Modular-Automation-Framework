@@ -38,11 +38,11 @@ class ResultZipper {
             fos = new FileOutputStream(zipFile);
             zos = new ZipOutputStream(fos);
 
-            System.out.println("Output to Zip : " + zipFile);
+//            log.trace("Output to Zip : " + zipFile);
             FileInputStream in = null;
 
             for (String file : fileList) {
-                System.out.println("File Added : " + file);
+                log.trace("File Added : " + file);
                 ZipEntry ze = new ZipEntry(source + File.separator + file);
                 zos.putNextEntry(ze);
                 try {
@@ -59,7 +59,7 @@ class ResultZipper {
             }
 
             zos.closeEntry();
-            System.out.println("Folder successfully compressed");
+            log.trace("Folder successfully compressed");
 
         } catch (IOException ex) {
             ex.printStackTrace();
