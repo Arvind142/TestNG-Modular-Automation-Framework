@@ -76,6 +76,7 @@ public class Listener implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
         TestReportManager.log(Status.FAIL, "testcase failed! [ " + result.getThrowable().getMessage() + " ]");
+        TestReportManager.log(result.getThrowable());
         TestReportManager.checkAndAddRetryReport(result);
         TestReportManager.attachSnapshot();
     }

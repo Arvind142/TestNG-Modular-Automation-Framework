@@ -104,6 +104,9 @@ public class TestReportManager {
     public static void log(Status status,String message){
         extentTestThreadLocal.get().log(status,message);
     }
+    public static void log(Throwable throwable){
+        extentTestThreadLocal.get().log(Status.FAIL,throwable);
+    }
 
     public static <T> void log(String stepDescription, T expected, T actual, String evidence) {
         TableLog testLog = TableLog.log(stepDescription, expected, actual, evidence);

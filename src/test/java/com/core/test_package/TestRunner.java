@@ -1,11 +1,13 @@
 package com.core.test_package;
 
+import com.core.framework.listener.RetryAnalyzer;
 import com.core.framework.webdriver.DriverManager;
 import com.core.framework.htmlreporter.TestReportManager;
 import com.core.framework.annotation.TestDescription;
 import com.core.framework.base.TestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
+import org.testng.IRetryAnalyzer;
 import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
